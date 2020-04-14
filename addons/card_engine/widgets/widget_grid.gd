@@ -4,15 +4,34 @@ extends Control
 # Space in pixels between the cards horizontally and vertically
 export(Vector2) var card_spacing = Vector2(0, 0)
 export(Vector2) var offset = Vector2(0, 0)
+
+export(int) var centered_vertical_offset = -975
 # Number of columns
 export(int) var columns = 3
 
 export(float) var card_ratio = 0.6
 
+signal highlight()
+signal unhighlight()
+signal play(card)
+
+var grabbed_offset = Vector2(-2600,-1450)
+
+var played = false
 var _container = null
+var _focused_card = null
+var _active_cards = Node2D.new()
+var _discarded_cards = Node2D.new()
 
 func _ready():
+#	add_child(_active_cards)
+#	add_child(_discarded_cards)
 	connect("resized", self, "_on_resized")
+
+func _process(delta):
+	if _focused_card != null and _focused_card.drag:
+		_focused_card.position = get_global_mouse_position() + grabbed_offset
+		print(_focused_card.position)
 
 func set_container(container):
 	_container = container
@@ -28,6 +47,11 @@ func _update_grid():
 		
 		card_widget.connect("mouse_entered", self, "_on_card_mouse_entered", [card_widget])
 		card_widget.connect("mouse_exited", self, "_on_card_mouse_exited", [card_widget])
+		card_widget.connect("left_pressed", self, "_on_card_left_pressed", [card_widget])
+		card_widget.connect("left_released", self, "_on_card_left_released", [card_widget])
+		card_widget.connect("right_pressed", self, "_on_card_right_pressed", [card_widget])
+		card_widget.connect("right_released", self, "_on_card_right_released", [card_widget])
+		card_widget.connect("mouse_motion", self, "_on_mouse_motion", [card_widget])
 		
 		add_child(card_widget)
 	
@@ -61,13 +85,92 @@ func _on_resized():
 	# Minimum height calculation to fit all rows
 	rect_min_size.y = (final_row+1)*(size.y + card_spacing.y)
 
+func set_focused_card(card):
+	if _focused_card != null: return
+	_focused_card = card
+	_focused_card.bring_front()
+	card.push_animation_state(Vector2(0, 0), 0, Vector2(1.05, 1.05), true, true, true)
+
+func unset_focused_card(card):
+	if _focused_card != card: return
+	_focused_card.pop_animation_state()
+	_focused_card.reset_z_index()
+	_focused_card = null
+
+func unset_selected_card(card):
+	if _focused_card != card: return
+	_focused_card.pop_animation_state()
+
 func _on_card_mouse_entered(card):
-	#card.bring_front()
-	card.call_deferred("bring_front")
-	card.push_animation_state(Vector2(0, 0), 0, Vector2(1.25, 1.25), true, true, true)
+	set_focused_card(card)
 
 func _on_card_mouse_exited(card):
-	#card.pop_animation_state()
-	card.call_deferred("pop_animation_state")
-	#card.reset_z_index()
-	card.call_deferred("reset_z_index")
+	unset_focused_card(card)
+
+func _on_card_left_pressed(card):
+	if _focused_card != card: return
+	if _focused_card.highlight:
+		unset_selected_card(card)
+		card.mouse_connect()
+		card.highlight = false
+		emit_signal("unhighlight")
+	else:
+		_focused_card.drag = true
+		VisualServer.canvas_item_set_clip(get_canvas_item(),true)
+
+func _on_card_left_released(card):
+	if _focused_card != card: return
+	if _focused_card.highlight: return
+	if _focused_card.drag:
+		play(card)
+
+func _on_card_right_pressed(card):
+	if _focused_card != card: return
+	if _focused_card.drag: return
+	if _focused_card.highlight:
+		unset_selected_card(card)
+		card.mouse_connect()
+		card.highlight = false
+		emit_signal("unhighlight")
+	else:
+		_focused_card.highlight = true
+		set_highlight_card(card)
+		card.mouse_disconnect()
+		emit_signal("highlight")
+	
+func _on_card_right_released(card):
+	if _focused_card != card: return
+	if _focused_card.drag: return
+
+func set_highlight_card(card):
+	if _focused_card != card: return
+	_focused_card.push_animation_state(Vector2(rect_size.x/2, centered_vertical_offset), 0, Vector2(2,2), false, false, true)
+
+func play(card):
+	VisualServer.canvas_item_set_clip(get_canvas_item(),false)
+	if Game._current_step == 1 and played == false and playable(card):
+		card.drag = false
+		_focused_card = null
+		played = true
+		Game.discard_card(card.get_index())
+		_on_resized()
+		emit_signal("play", card)
+	else:
+		_focused_card.drag = false
+		card.pop_animation_state()
+		unset_focused_card(card)
+		#yield(get_tree().create_timer(0.25), "timeout")
+		set_focused_card(card)
+
+func playable(card):
+	var targets = card._card_data.targets
+	if targets == "single":
+		if $"../../../../../../.."._check_targets() != null:
+			return true
+		else:
+			return false
+	elif targets != "single":
+		if $"../../../../../../../Playable".get_rect().has_point(get_global_mouse_position()):
+			return true
+		else:
+			return false

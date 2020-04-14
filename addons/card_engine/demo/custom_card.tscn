@@ -17,11 +17,10 @@ use_filter = true
 font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 400
-outline_size = 15
+size = 150
+outline_size = 20
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
-extra_spacing_char = 2
 font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=3]
@@ -30,30 +29,31 @@ use_filter = true
 font_data = ExtResource( 9 )
 
 [sub_resource type="DynamicFont" id=4]
-size = 250
+size = 100
 use_filter = true
 font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=5]
-size = 250
+size = 100
 use_filter = true
 font_data = ExtResource( 9 )
 
 [node name="custom_card" type="Node2D"]
+position = Vector2( 1.97046, 0.985229 )
 script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
+default_size = Vector2( 1200, 1600 )
 animation_speed = 0.6
 
 [node name="img_background" type="Sprite" parent="."]
 position = Vector2( 0, 248 )
-scale = Vector2( 3.08366, 3.08366 )
 texture = ExtResource( 3 )
 region_filter_clip = true
 
 [node name="img_picture" type="Sprite" parent="."]
-position = Vector2( 9.09495e-13, -472 )
+position = Vector2( 0, -72.1872 )
 scale = Vector2( 2.45914, 2.45914 )
 texture = ExtResource( 4 )
 __meta__ = {
@@ -80,10 +80,14 @@ align = 1
 valign = 1
 
 [node name="lbl_name" type="Label" parent="."]
-margin_left = -1506.13
-margin_top = 641.008
-margin_right = 1507.87
-margin_bottom = 1041.01
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -382.0
+margin_top = 137.148
+margin_right = 384.0
+margin_bottom = 492.148
 mouse_filter = 1
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -91,7 +95,8 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 1
 text = "Name placeholder"
 align = 1
-valign = 1
+valign = 2
+autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -124,10 +129,10 @@ align = 1
 valign = 1
 
 [node name="lbl_desc" type="RichTextLabel" parent="."]
-margin_left = -1506.0
-margin_top = 1272.0
-margin_right = 1508.0
-margin_bottom = 2102.0
+margin_left = -521.0
+margin_top = 572.0
+margin_right = 521.0
+margin_bottom = 878.0
 mouse_filter = 1
 custom_fonts/bold_font = SubResource( 4 )
 custom_fonts/normal_font = SubResource( 5 )
@@ -150,10 +155,10 @@ position = Vector2( 0, 144 )
 texture = ExtResource( 10 )
 
 [node name="mouse_area" type="Control" parent="."]
-margin_left = -1974.0
-margin_top = -2079.0
-margin_right = 1974.0
-margin_bottom = 2575.0
+margin_left = -640.0
+margin_top = -505.015
+margin_right = 640.0
+margin_bottom = 1003.99
 mouse_filter = 1
 __meta__ = {
 "_edit_use_anchors_": false
