@@ -1,0 +1,150 @@
+{
+    "sword1": {
+      "category": "fighter",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "fighter",
+        "picture": "sword"
+      },
+      "values": {
+        "cost": 1,
+        "attack": 1
+      },
+      "texts": {
+        "name": "The Sword 1",
+        "type": "attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto ure mum[/center]"
+      }
+    },
+    "two_hands": {
+      "category": "fighter",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "fighter",
+        "picture": "sword"
+      },
+      "values": {
+        "cost": 2,
+        "attack": 4,
+        "vulnerable": 1
+      },
+      "texts": {
+        "name": "Two Hands Wack 4",
+        "type": "attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto one enemy\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]"
+      }
+    },
+    "sword2": {
+      "category": "fighter",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "fighter",
+        "picture": "sword"
+      },
+      "values": {
+        "cost": 1,
+        "attack": 2
+      },
+      "texts": {
+        "name": "The Sword 2",
+        "type": "attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto ure mum[/center]"
+      }
+    },
+    "two_handse": {
+      "category": "fighter",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "fighter",
+        "picture": "sword"
+      },
+      "values": {
+        "cost": 2,
+        "attack": 3,
+        "vulnerable": 1
+      },
+      "texts": {
+        "name": "Two Hands Wack 3",
+        "type": "attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto one enemy\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]"
+      }
+    },
+
+    "fireball": {
+      "category": "mage",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "mage",
+        "picture": "fireball"
+      },
+      "values": {
+        "cost": 1,
+        "attack": 6
+      },
+      "texts": {
+        "name": "Fireball",
+        "type": "Attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto one enemy[/center]"
+      }
+    },
+    "mental_shock": {
+      "category": "mage",
+      "type": "attack",
+      "tags": [],
+      "images": {
+        "background": "mage",
+        "picture": "fireball"
+      },
+      "values": {
+        "cost": 1,
+        "attack": 3,
+        "weak": 2
+      },
+      "texts": {
+        "name": "Mental Shock",
+        "type": "Attack",
+        "desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto one enemy\nApply [color=#a02c2c]$weak[/color] weak[/center]"
+      }
+    },
+    "protection": {
+      "category": "mage",
+      "type": "defense",
+      "tags": [],
+      "images": {
+        "background": "mage",
+        "picture": "protection"
+      },
+      "values": {
+        "cost": 1,
+        "defense": 7
+      },
+      "texts": {
+        "name": "Protection",
+        "type": "Defense",
+        "desc": "[center]Block [color=#0044aa]$defense[/color] damage[/center]"
+      }
+    },
+    "invisibility": {
+      "category": "mage",
+      "type": "defense",
+      "tags": [],
+      "images": {
+        "background": "mage",
+        "picture": "protection"
+      },
+      "values": {
+        "cost": 2,
+        "defense": 13
+      },
+      "texts": {
+        "name": "Invisibility",
+        "type": "Defense",
+        "desc": "[center]Block [color=#0044aa]$defense[/color] damage[/center]"
+      }
+    }
+}

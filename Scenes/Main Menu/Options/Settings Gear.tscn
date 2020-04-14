@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scenes/Main Menu/Assets/be32af43b3e0b05f702e272d1968a3ed.png" type="Texture" id=1]
+
+[node name="TextureButton" type="TextureButton"]
+margin_left = 3663.69
+margin_top = 30.7456
+margin_right = 4643.69
+margin_bottom = 1012.75
+rect_scale = Vector2( 0.15, 0.15 )
+toggle_mode = true
+texture_normal = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

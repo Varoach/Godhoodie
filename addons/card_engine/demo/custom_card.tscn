@@ -1,0 +1,160 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://addons/card_engine/widgets/widget_card.gd" type="Script" id=1]
+[ext_resource path="res://addons/card_engine/icons/card-node.png" type="Texture" id=2]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-background-consumables.png" type="Texture" id=3]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-picture-placeholder.png" type="Texture" id=4]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-cost-default.png" type="Texture" id=5]
+[ext_resource path="res://addons/card_engine/demo/Rajdhani-Bold.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-name-default.png" type="Texture" id=7]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-type-default.png" type="Texture" id=8]
+[ext_resource path="res://addons/card_engine/demo/Rajdhani-SemiBold.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://addons/card_engine/demo/cards/images/card-desc-default.png" type="Texture" id=10]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 400
+outline_size = 15
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+extra_spacing_char = 2
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 20
+use_filter = true
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 250
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 250
+use_filter = true
+font_data = ExtResource( 9 )
+
+[node name="custom_card" type="Node2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_editor_icon": ExtResource( 2 )
+}
+animation_speed = 0.6
+
+[node name="img_background" type="Sprite" parent="."]
+position = Vector2( 0, 248 )
+scale = Vector2( 3.08366, 3.08366 )
+texture = ExtResource( 3 )
+region_filter_clip = true
+
+[node name="img_picture" type="Sprite" parent="."]
+position = Vector2( 9.09495e-13, -472 )
+scale = Vector2( 2.45914, 2.45914 )
+texture = ExtResource( 4 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="img_cost" type="Sprite" parent="."]
+visible = false
+position = Vector2( -200, -288 )
+texture = ExtResource( 5 )
+
+[node name="lbl_cost" type="Label" parent="img_cost"]
+margin_left = -13.0
+margin_top = -20.0
+margin_right = 8.0
+margin_bottom = 44.0
+mouse_filter = 1
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "1"
+align = 1
+valign = 1
+
+[node name="lbl_name" type="Label" parent="."]
+margin_left = -1506.13
+margin_top = 641.008
+margin_right = 1507.87
+margin_bottom = 1041.01
+mouse_filter = 1
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 1
+text = "Name placeholder"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="img_name" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, -382 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 7 )
+
+[node name="img_type" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, -240 )
+texture = ExtResource( 8 )
+
+[node name="lbl_type" type="Label" parent="img_type"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -133.0
+margin_top = -44.0
+margin_right = -33.0
+margin_bottom = -24.0
+mouse_filter = 1
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Attack"
+align = 1
+valign = 1
+
+[node name="lbl_desc" type="RichTextLabel" parent="."]
+margin_left = -1506.0
+margin_top = 1272.0
+margin_right = 1508.0
+margin_bottom = 2102.0
+mouse_filter = 1
+custom_fonts/bold_font = SubResource( 4 )
+custom_fonts/normal_font = SubResource( 5 )
+custom_colors/default_color = Color( 0, 0, 0, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Placeholder text
+[b]Placeholder text[/b][/center]
+"
+text = "Placeholder text
+Placeholder text
+"
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="img_desc" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, 144 )
+texture = ExtResource( 10 )
+
+[node name="mouse_area" type="Control" parent="."]
+margin_left = -1974.0
+margin_top = -2079.0
+margin_right = 1974.0
+margin_bottom = 2575.0
+mouse_filter = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

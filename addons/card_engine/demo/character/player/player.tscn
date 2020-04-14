@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/card_engine/demo/character/character.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/card_engine/demo/character/player/player.gd" type="Script" id=2]
+
+[node name="root" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="healthbar" parent="character" index="2"]
+max_value = 20.0
+value = 20.0

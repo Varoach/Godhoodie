@@ -1,0 +1,51 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "card_state",
+"language": "GDScript",
+"path": "res://addons/card_engine/demo/card_state.gd"
+} ]
+_global_script_class_icons={
+"card_state": ""
+}
+
+[application]
+
+config/name="Godhood"
+run/main_scene="res://Node.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+CEInterface="*res://addons/card_engine/demo/interface.gd"
+CardEngine="*res://addons/card_engine/card_engine.gd"
+Game="*res://addons/card_engine/demo/game.gd"
+EnemyEngine="*res://addons/card_engine/demo/character/enemy/enemy_engine.gd"
+Inventory="*res://addons/card_engine/demo/Inventory/inventory.gd"
+
+[display]
+
+window/size/width=3840
+window/size/height=2160
+window/size/test_width=1920
+window/size/test_height=1080
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "card_engine" )
+
+[rendering]
+
+environment/default_clear_color=Color( 0.180392, 0.180392, 0.180392, 1 )
+environment/default_environment="res://default_env.tres"
