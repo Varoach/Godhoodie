@@ -3,10 +3,11 @@ extends Control
 
 # Space in pixels between the cards horizontally and vertically
 export(Vector2) var card_spacing = Vector2(0, 0)
+export(Vector2) var offset = Vector2(0, 0)
 # Number of columns
 export(int) var columns = 3
 
-export var card_ratio = 0.6
+export(float) var card_ratio = 0.6
 
 var _container = null
 
@@ -48,7 +49,7 @@ func _on_resized():
 		# Position calculations
 		var col = card_index%columns
 		var row = floor(card_index / columns)
-		var pos = size*Vector2(col, row) + Vector2(size.x, size.y)/2 + card_spacing*Vector2(col+1, row+1)
+		var pos = size*Vector2(col, row) + Vector2(size.x, size.y)/2 + card_spacing*Vector2(col+1, row+1) - offset
 		
 		if row > final_row:
 			final_row = row

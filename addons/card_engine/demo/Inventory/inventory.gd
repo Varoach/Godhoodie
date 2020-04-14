@@ -6,6 +6,7 @@ var CardPile = preload("res://addons/card_engine/card_pile.gd")
 var player_cards = CardPile.new()
 var player_discard = CardPile.new()
 
+var weapons = CardContainer.new()
 var items = CardContainer.new()
-var skills = CardContainer.new()
-var ingredients
+var jutsus = CardContainer.new()
+var ingredients = CardContainer.new()

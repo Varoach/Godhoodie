@@ -57,9 +57,9 @@ __meta__ = {
 anchor_top = 0.5
 anchor_bottom = 0.5
 margin_left = 900.0
-margin_top = 380.0
+margin_top = 120.0
 margin_right = 940.0
-margin_bottom = 420.0
+margin_bottom = 160.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -71,9 +71,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 margin_left = -940.0
-margin_top = 380.0
+margin_top = 120.0
 margin_right = -900.0
-margin_bottom = 420.0
+margin_bottom = 160.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -83,6 +83,7 @@ __meta__ = {
 layer = 2
 
 [node name="hand" type="Control" parent="CanvasLayer"]
+visible = false
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -257,9 +258,9 @@ valign = 1
 
 [node name="lbl_step" type="Label" parent="."]
 margin_left = 60.0
-margin_top = 300.0
+margin_top = 226.0
 margin_right = 3780.0
-margin_bottom = 450.0
+margin_bottom = 376.0
 custom_fonts/font = SubResource( 3 )
 text = "EMPTY"
 align = 1
@@ -280,6 +281,7 @@ __meta__ = {
 }
 
 [node name="Inventory" parent="." instance=ExtResource( 13 )]
+[connection signal="inventory_ready" from="." to="Inventory" method="_on_inventory_ready"]
 [connection signal="highlight" from="CanvasLayer/hand" to="." method="_toggle_in"]
 [connection signal="play" from="CanvasLayer/hand" to="." method="_on_hand_play"]
 [connection signal="unhighlight" from="CanvasLayer/hand" to="." method="_toggle_out"]

@@ -29,8 +29,10 @@ var player_deck    = null
 var player_hand    = CardHand.new()
 var player_draw    = CardPile.new()
 var player_discard = CardPile.new()
-var player_inventory
+var player_weapons
 var player_items
+var player_jutsus
+var player_inventory
 var player_cards
 var tacos = false
 
@@ -73,9 +75,11 @@ func create_game_real(character_name):
 	
 	if not tacos:
 		var player_inventory = PlayerInventory.new()
+		player_weapons = player_inventory.weapons
 		player_items = player_inventory.items
+		player_jutsus = player_inventory.jutsus
 		player_cards = player_inventory.player_cards
-		player_items.copy_from(CardEngine.library().deck("fighter_starter"))
+		player_jutsus.copy_from(CardEngine.library().deck("fighter_starter"))
 		tacos = true
 	
 	player_cards.copy_from(player_items)

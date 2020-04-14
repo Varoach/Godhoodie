@@ -25,6 +25,9 @@ margin_top = 24.0
 margin_right = -24.0
 margin_bottom = -24.0
 color = Color( 1, 1, 1, 0.501961 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="grid_scroll" type="ScrollContainer" parent="grid_frame"]
 anchor_right = 1.0

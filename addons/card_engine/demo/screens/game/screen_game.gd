@@ -20,6 +20,7 @@ var _focused_target = null
 
 signal enemy_move()
 signal your_turn()
+signal inventory_ready()
 
 func _init():
 	add_child(_animation)
@@ -47,6 +48,8 @@ func _ready():
 	ready_up()
 	
 	add_targets()
+	
+	emit_signal("inventory_ready")
 
 func _enter_tree():
 	pass
