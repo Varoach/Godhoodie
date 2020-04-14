@@ -34,6 +34,9 @@ margin_top = 20.0
 margin_right = -20.0
 margin_bottom = -20.0
 scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="grid" type="Control" parent="grid_frame/grid_scroll"]
 margin_right = 3752.0
@@ -43,8 +46,9 @@ script = ExtResource( 3 )
 __meta__ = {
 "_editor_icon": ExtResource( 4 )
 }
-card_spacing = Vector2( 60, 60 )
-columns = 4
+card_spacing = Vector2( 60, 150 )
+columns = 6
+card_ratio = 0.625
 
 [node name="btn_back" parent="." instance=ExtResource( 5 )]
 anchor_left = 1.0

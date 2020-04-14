@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://addons/card_engine/demo/screens/game/screen_game.gd" type="Script" id=1]
 [ext_resource path="res://addons/card_engine/demo/screens/game/background.png" type="Texture" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://addons/card_engine/demo/screens/game/discard-pile-icon.png" type="Texture" id=10]
 [ext_resource path="res://addons/card_engine/demo/screens/game/next-turn-icon.png" type="Texture" id=11]
 [ext_resource path="res://addons/card_engine/demo/screens/game/energy_bg.png" type="Texture" id=12]
+[ext_resource path="res://addons/card_engine/demo/Inventory/inventory.tscn" type="PackedScene" id=13]
 
 [sub_resource type="DynamicFont" id=1]
 size = 30
@@ -277,6 +278,8 @@ margin_bottom = 1799.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Inventory" parent="." instance=ExtResource( 13 )]
 [connection signal="highlight" from="CanvasLayer/hand" to="." method="_toggle_in"]
 [connection signal="play" from="CanvasLayer/hand" to="." method="_on_hand_play"]
 [connection signal="unhighlight" from="CanvasLayer/hand" to="." method="_toggle_out"]

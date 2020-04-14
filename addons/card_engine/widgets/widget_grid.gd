@@ -6,6 +6,8 @@ export(Vector2) var card_spacing = Vector2(0, 0)
 # Number of columns
 export(int) var columns = 3
 
+export var card_ratio = 0.6
+
 var _container = null
 
 func _ready():
@@ -39,8 +41,8 @@ func _on_resized():
 	
 	# Size calculations
 	var card_width = round((rect_size.x - (columns+1)*card_spacing.x) / columns)
-	var ratio = card_width / card_widget.default_size.x
-	var size = Vector2(card_width, round(card_widget.default_size.y * ratio))
+	var ratio = card_width / card_widget.default_size.x*card_ratio
+	var size = Vector2(card_width, round(card_widget.default_size.y*card_ratio * ratio))
 		
 	for card_widget in get_children():
 		# Position calculations
