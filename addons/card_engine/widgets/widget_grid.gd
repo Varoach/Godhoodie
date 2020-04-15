@@ -5,7 +5,7 @@ extends Control
 export(Vector2) var card_spacing = Vector2(0, 0)
 export(Vector2) var offset = Vector2(0, 0)
 
-export(int) var centered_vertical_offset = -975
+export(int) var centered_vertical_offset = 400
 # Number of columns
 export(int) var columns = 3
 
@@ -15,7 +15,7 @@ signal highlight()
 signal unhighlight()
 signal play(card)
 
-var grabbed_offset = Vector2(-2600,-1450)
+var grabbed_offset = Vector2(0,-50)
 
 var played = false
 var _container = null
@@ -31,7 +31,6 @@ func _ready():
 func _process(delta):
 	if _focused_card != null and _focused_card.drag:
 		_focused_card.position = get_global_mouse_position() + grabbed_offset
-		print(_focused_card.position)
 
 func set_container(container):
 	_container = container
@@ -110,13 +109,10 @@ func _on_card_mouse_exited(card):
 func _on_card_left_pressed(card):
 	if _focused_card != card: return
 	if _focused_card.highlight:
-		unset_selected_card(card)
-		card.mouse_connect()
-		card.highlight = false
-		emit_signal("unhighlight")
+		unset_highlight_card(card)
 	else:
 		_focused_card.drag = true
-		VisualServer.canvas_item_set_clip(get_canvas_item(),true)
+		_focused_card.set_as_toplevel(true)
 
 func _on_card_left_released(card):
 	if _focused_card != card: return
@@ -125,15 +121,13 @@ func _on_card_left_released(card):
 		play(card)
 
 func _on_card_right_pressed(card):
+	return
 	if _focused_card != card: return
 	if _focused_card.drag: return
 	if _focused_card.highlight:
-		unset_selected_card(card)
-		card.mouse_connect()
-		card.highlight = false
-		emit_signal("unhighlight")
+		unset_highlight_card(card)
 	else:
-		_focused_card.highlight = true
+		card.highlight = true
 		set_highlight_card(card)
 		card.mouse_disconnect()
 		emit_signal("highlight")
@@ -142,21 +136,32 @@ func _on_card_right_released(card):
 	if _focused_card != card: return
 	if _focused_card.drag: return
 
+func unset_highlight_card(card):
+	if _focused_card != card: return
+#	focused_card.set_as_toplevel(false)
+	card.highlight = false
+	unset_selected_card(card)
+	card.mouse_connect()
+	emit_signal("unhighlight")
+	$"../".scroll_vertical_enabled = true
+
 func set_highlight_card(card):
 	if _focused_card != card: return
-	_focused_card.push_animation_state(Vector2(rect_size.x/2, centered_vertical_offset), 0, Vector2(2,2), false, false, true)
+#	_focused_card.set_as_toplevel(true)
+	$"../".scroll_vertical_enabled = false
+	_focused_card.push_animation_state(Vector2(rect_size.x/2, centered_vertical_offset), 0, Vector2(1.5,1.5), false, false, true)
 
 func play(card):
-	VisualServer.canvas_item_set_clip(get_canvas_item(),false)
+	if _focused_card != card: return
+	_focused_card.set_as_toplevel(false)
+	card.drag = false
 	if Game._current_step == 1 and played == false and playable(card):
-		card.drag = false
 		_focused_card = null
 		played = true
 		Game.discard_card(card.get_index())
 		_on_resized()
-		emit_signal("play", card)
+		emit_signal("play", card, name)
 	else:
-		_focused_card.drag = false
 		card.pop_animation_state()
 		unset_focused_card(card)
 		#yield(get_tree().create_timer(0.25), "timeout")
@@ -164,6 +169,7 @@ func play(card):
 
 func playable(card):
 	var targets = card._card_data.targets
+	print($"../../../../../../.."._check_targets())
 	if targets == "single":
 		if $"../../../../../../.."._check_targets() != null:
 			return true

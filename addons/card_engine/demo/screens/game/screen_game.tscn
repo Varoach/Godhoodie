@@ -273,9 +273,9 @@ __meta__ = {
 
 [node name="Playable" type="Control" parent="."]
 pause_mode = 2
-visible = false
 margin_right = 3840.0
-margin_bottom = 1799.0
+margin_bottom = 1346.0
+mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }

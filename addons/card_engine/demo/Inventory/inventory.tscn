@@ -9,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -3.0
 margin_top = 0.319946
+mouse_filter = 2
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -31,6 +32,7 @@ margin_left = 30.0
 margin_top = 30.0
 margin_right = -30.0
 margin_bottom = -30.0
+mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -72,7 +74,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="grid" type="Control" parent="container/horizontal_container/weapons_container/weapons_frame/weapons_scroll"]
+[node name="weapons" type="Control" parent="container/horizontal_container/weapons_container/weapons_frame/weapons_scroll"]
 margin_right = 12.0
 margin_bottom = 12.0
 size_flags_horizontal = 3
@@ -110,7 +112,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="grid" type="Control" parent="container/horizontal_container/items_container/items_frame/items_scroll"]
+[node name="items" type="Control" parent="container/horizontal_container/items_container/items_frame/items_scroll"]
 margin_right = 12.0
 margin_bottom = 12.0
 size_flags_horizontal = 3
@@ -144,12 +146,13 @@ margin_right = 1220.0
 margin_bottom = 750.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+follow_focus = true
 scroll_horizontal_enabled = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="grid" type="Control" parent="container/horizontal_container/jutsus_container/jutsus_frame/jutsus_scroll"]
+[node name="jutsus" type="Control" parent="container/horizontal_container/jutsus_container/jutsus_frame/jutsus_scroll"]
 margin_right = 1215.0
 margin_bottom = 745.0
 size_flags_horizontal = 3
