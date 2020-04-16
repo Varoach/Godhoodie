@@ -102,7 +102,6 @@ func _remove_card_widget(card):
 				yield(get_tree().create_timer(0.5), "timeout")
 			_discarded_cards.remove_child(card_widget)
 			card_widget.queue_free()
-			#card_widget.call_deferred("queue_free")
 
 func _apply_hand_transform():
 	yield(get_tree(), "idle_frame")
@@ -226,7 +225,7 @@ func play(card):
 		card.drag = false
 		_focused_card = null
 		played = true
-		Game.discard_card(card.get_index())
+#		Game.discard_card(card.get_index())
 		emit_signal("play", card)
 	else:
 		_focused_card.drag = false

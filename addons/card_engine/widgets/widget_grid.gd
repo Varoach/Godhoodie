@@ -21,7 +21,8 @@ var played = false
 var _container = null
 var _focused_card = null
 var _active_cards = Node2D.new()
-var _discarded_cards = Node2D.new()
+var _used_cards = Node2D.new()
+export(NodePath) var use_point
 
 func _ready():
 #	add_child(_active_cards)
@@ -34,6 +35,9 @@ func _process(delta):
 
 func set_container(container):
 	_container = container
+	_container.connect("card_added", self, "_on_container_card_added")
+	_container.connect("multiple_card_added", self, "_on_container_multiple_card_added")
+	_container.connect("card_removed", self, "_on_container_card_removed")
 	_update_grid()
 
 func _update_grid():
@@ -158,9 +162,8 @@ func play(card):
 	if Game._current_step == 1 and played == false and playable(card):
 		_focused_card = null
 		played = true
-		Game.discard_card(card.get_index())
-		_on_resized()
-		emit_signal("play", card, name)
+		Game.discard_card(card.get_index(), name)
+		emit_signal("play", card)
 	else:
 		card.pop_animation_state()
 		unset_focused_card(card)
@@ -180,3 +183,28 @@ func playable(card):
 			return true
 		else:
 			return false
+
+func _remove_card_widget(card):
+	for card_widget in _active_cards.get_children():
+		if card_widget.get_card_data() == card:
+			_active_cards.remove_child(card_widget)
+			_used_cards.add_child(card_widget)
+			if _apply_discard_transform(card_widget):
+				# If a transform has been applied we wait a second for the animation to finish
+				yield(get_tree().create_timer(0.5), "timeout")
+			_used_cards.remove_child(card_widget)
+			card_widget.queue_free()
+
+func _apply_discard_transform(widget):
+	if not use_point.is_empty():
+		widget.push_animation_state(
+			_to_local(get_node(use_point).global_position), 90, Vector2(0,0), false, false, false)
+		return true
+	return false
+
+func _to_local(point):
+	return get_global_transform().affine_inverse().xform(point)
+
+func _on_container_card_removed(card):
+	_remove_card_widget(card)
+	_on_resized()

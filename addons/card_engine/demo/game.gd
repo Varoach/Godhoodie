@@ -114,8 +114,8 @@ func _on_stepper_timeout():
 		_current_step = 1
 	#print("current step: " + String(_current_step))
 
-func discard_card(cardIndex):
-	player_hand.discard(cardIndex)
+func discard_card(cardIndex, group):
+	player_jutsus.remove(cardIndex)
 	player_discard.append(cardIndex)
 
 func win():
