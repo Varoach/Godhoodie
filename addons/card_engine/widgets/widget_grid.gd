@@ -17,7 +17,7 @@ signal play(card)
 
 var grabbed_offset = Vector2(0,-50)
 
-var played = false
+onready var inventory = get_node("../../../../../..")
 var _container = null
 var _focused_card = null
 var _active_cards = Node2D.new()
@@ -59,6 +59,9 @@ func _update_grid():
 		add_child(card_widget)
 	
 	_on_resized()
+
+func _update_grid_play():
+	pass
 
 func _on_resized():
 	yield(get_tree(), "idle_frame")
@@ -135,7 +138,7 @@ func _on_card_right_pressed(card):
 		set_highlight_card(card)
 		card.mouse_disconnect()
 		emit_signal("highlight")
-	
+
 func _on_card_right_released(card):
 	if _focused_card != card: return
 	if _focused_card.drag: return
@@ -157,17 +160,17 @@ func set_highlight_card(card):
 
 func play(card):
 	if _focused_card != card: return
-	_focused_card.set_as_toplevel(false)
+	card.set_as_toplevel(false)
 	card.drag = false
-	if Game._current_step == 1 and played == false and playable(card):
+	if Game._current_step == 1 and inventory.played == false and playable(card):
 		_focused_card = null
-		played = true
-		Game.discard_card(card.get_index(), name)
-		emit_signal("play", card)
+		inventory.played = true
+		_on_resized()
+		emit_signal("play", card, name)
 	else:
 		card.pop_animation_state()
 		unset_focused_card(card)
-		#yield(get_tree().create_timer(0.25), "timeout")
+		_on_resized()
 		set_focused_card(card)
 
 func playable(card):

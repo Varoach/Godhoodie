@@ -139,7 +139,7 @@ func _on_turn_started():
 func _on_animation_completed(object, key):
 	_animation.remove(object, key)
 
-func _on_hand_play(card):
+func _on_hand_play(card, hand):
 	Game._stepper.start()
 	Game.use(card, _check_targets())
 	_change_step_text("Enemy turn")
@@ -147,7 +147,7 @@ func _on_hand_play(card):
 	for child in $enemy_position.get_children():
 		child.play_turn()
 		yield(Game._stepper,"timeout")
-	$CanvasLayer/hand.played = false
+	$Inventory.played = false
 
 func set_focused_target(target):
 	if _focused_target != null: return

@@ -97,6 +97,7 @@ tracks/1/keys = {
 
 [node name="root" type="Node2D"]
 position = Vector2( 0, -175.488 )
+scale = Vector2( 0.9, 0.9 )
 script = ExtResource( 4 )
 
 [node name="character" type="Node2D" parent="."]
