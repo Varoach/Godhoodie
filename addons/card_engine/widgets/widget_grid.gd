@@ -128,12 +128,12 @@ func _on_card_left_released(card):
 		play(card)
 
 func _on_card_right_pressed(card):
-	return
 	if _focused_card != card: return
 	if _focused_card.drag: return
 	if _focused_card.highlight:
 		unset_highlight_card(card)
 	else:
+		_focused_card.set_as_toplevel(true)
 		card.highlight = true
 		set_highlight_card(card)
 		card.mouse_disconnect()
@@ -165,6 +165,9 @@ func play(card):
 	if Game._current_step == 1 and inventory.played == false and playable(card):
 		_focused_card = null
 		inventory.played = true
+		if name == "items" or name == "weapons":
+			_container.remove(card.get_index())
+			_update_grid()
 		_on_resized()
 		emit_signal("play", card, name)
 	else:
@@ -175,7 +178,6 @@ func play(card):
 
 func playable(card):
 	var targets = card._card_data.targets
-	print($"../../../../../../.."._check_targets())
 	if targets == "single":
 		if $"../../../../../../.."._check_targets() != null:
 			return true

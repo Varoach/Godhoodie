@@ -12,7 +12,14 @@ var _enemy_characters = {
 		"enemy2": preload("res://addons/card_engine/demo/character/enemy/enemy2/enemy2.tscn")
 	}
 
+var weapon_ref = funcref(Game, "weapon_use")
+var item_ref = funcref(Game, "item_use")
+var jutsu_ref = funcref(Game, "jutsu_use")
+
+var hand_use = {"weapons" : weapon_ref, "items" : item_ref, "jutsus" : jutsu_ref}
+
 var targets = []
+var enemy_targets = []
 var enemy_positions = []
 var possible_enemy_positions = []
 
@@ -62,14 +69,14 @@ func _exit_tree():
 
 func ready_up():
 	possible_enemy_positions = [Vector2(0,0), Vector2(-700,0), Vector2(700,0)]
-	var positions = floor(Game._discard_rng.randomf()*3)
-	for i in range(positions+1):
-		$enemy_position.add_child(_enemy_characters.values()[floor(Game._discard_rng.randomf()*_enemy_characters.size())].instance())
-	if positions == 0:
-		enemy_positions = [possible_enemy_positions[0]]
+	var positions = randi() % 3+1
+	for i in range(positions):
+		$enemy_position.add_child(_enemy_characters.values()[randi() % _enemy_characters.size()].instance())
 	if positions == 1:
-		enemy_positions = [possible_enemy_positions[1]+Vector2(300,0),possible_enemy_positions[2]+Vector2(-300,0)]
+		enemy_positions = [possible_enemy_positions[0]]
 	if positions == 2:
+		enemy_positions = [possible_enemy_positions[1]+Vector2(300,0),possible_enemy_positions[2]+Vector2(-300,0)]
+	if positions == 3:
 		enemy_positions = [possible_enemy_positions[1]+Vector2(-150,0),possible_enemy_positions[0]+Vector2(-150,0),possible_enemy_positions[2]+Vector2(-150,0)]
 
 func add_targets():
@@ -84,12 +91,14 @@ func add_targets():
 	for child in $enemy_position.get_children():
 		child.position.x = enemy_positions[child.get_index()].x
 		targets.append(child)
+		enemy_targets.append(child)
 		child.connect("mouse_entered", self, "_on_target_mouse_entered", [child])
 		child.connect("mouse_exited", self, "_on_target_mouse_exited", [child])
 #		child.connect("focus", self, "_on_focus", [child])
 #		child.connect("unfocus", self, "_on_unfocus", [child])
 		Game._steps.append("enemy_turn")
 	Game.targets = targets
+	Game.enemy_targets = enemy_targets
 
 func _change_step_text(text):
 	$lbl_step.text = text
@@ -140,8 +149,10 @@ func _on_animation_completed(object, key):
 	_animation.remove(object, key)
 
 func _on_hand_play(card, hand):
+	var target = _check_targets()
 	Game._stepper.start()
-	Game.use(card, _check_targets())
+	if hand in hand_use:
+		hand_use[hand].call_func(card, target)
 	_change_step_text("Enemy turn")
 	yield(Game._stepper,"timeout")
 	for child in $enemy_position.get_children():

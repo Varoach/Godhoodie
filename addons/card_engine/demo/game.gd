@@ -16,6 +16,15 @@ signal use(card, target)
 
 var targets = []
 
+var enemy_targets = []
+
+var single_ref = funcref(self, "apply_effects")
+var enemies_ref = funcref(self, "enemies")
+var everyone_ref = funcref(self, "everyone")
+var random_ref = funcref(self, "random")
+
+var use_case = {"single" : single_ref, "enemies" : enemies_ref, "everyone" : everyone_ref, "random" : random_ref}
+
 # Constant values
 const HAND_SIZE = 4
 
@@ -80,6 +89,7 @@ func create_game_real(character_name):
 		player_jutsus = player_inventory.jutsus
 		player_cards = player_inventory.player_cards
 		player_jutsus.copy_from(CardEngine.library().deck("fighter_starter"))
+		player_items.copy_from(CardEngine.library().deck("fighter_starter"))
 		tacos = true
 	
 	player_cards.copy_from(player_items)
@@ -134,21 +144,45 @@ func return_state():
 	_steps = ["start_game", "your_turn"]
 	_current_step = 0
 	targets.clear()
+	enemy_targets.clear()
 
-func use(card, curr_target = null):
-	if card._card_data.targets == "single":
-		apply_effects(card, curr_target)
-	elif card._card_data.targets == "enemies":
-		for target in targets:
-			if target == targets[0]:
-				continue
-			else:
-				apply_effects(card, target)
-	elif card._card_data.targets == "everyone":
-		for target in targets:
-			apply_effects(card, target)
+func weapon_use(card, curr_target = null):
+	pass
+
+func item_use(card, curr_target = null):
+	jutsu_use(card, curr_target)
+
+func jutsu_use(card, curr_target = null):
+	if card._card_data.targets in use_case:
+		use_case[card._card_data.targets].call_func(card, curr_target)
 	Game.player.get_node("animations").play("attack")
 
 func apply_effects(card, target):
 	for value in card._card_data.values:
+		if target != null and value != "cost":
 			target.use(value, CardEngine.final_value(card.get_card_data(), value))
+
+func enemies(card, target = null):
+	for target in enemy_targets:
+		apply_effects(card, target)
+
+func everyone(card, target = null):
+	for target in targets:
+		apply_effects(card, target)
+
+func random(card, target = null):
+	var target_type = card._card_data.target_type
+	var target_amount = card._card_data.target_amount
+	if targets.size() > 1:
+		for i in range(target_amount):
+			random_hit(card, target)
+	else:
+		random_hit(card, target)
+
+func random_hit(card, target):
+	var target_type = card._card_data.target_type
+	var target_amount = card._card_data.target_amount
+	if target_type == "enemy":
+		apply_effects(card, enemy_targets[randi() % enemy_targets.size()])
+	elif target_type == "everyone":
+		apply_effects(card, targets[(randi() % targets.size())])

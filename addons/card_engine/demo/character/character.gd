@@ -8,6 +8,11 @@ var shOffset = Vector2(0, 0)
 var attack
 var focused
 
+var attack_ref = funcref(self, "_damage_received")
+var healing_ref = funcref(self, "_healing_received")
+
+var use_type = {"attack" : attack_ref, "heal" : healing_ref}
+
 func _ready():
 	$character/healthbar.set_position(Vector2(0, $character/appearance.get_rect().position.y*$character/appearance.scale.y) + hpOffset)
 	$character/shadow.set_position(Vector2(0, $character/appearance.get_rect().end.y*$character/appearance.scale.y) + shOffset)
@@ -40,7 +45,5 @@ func check_focus():
 	focused = false
 
 func use(type, value):
-	if type == "attack":
-		_damage_received(value)
-	if type == "heal":
-		_healing_received(value)
+	if type in use_type:
+		use_type[type].call_func(value)

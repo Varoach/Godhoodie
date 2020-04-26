@@ -54,7 +54,7 @@ func _abilities():
 		curr_ability.erase("heal")
 	while curr_ability.size() > 1:
 		var power = curr_ability.keys()
-		var selected_power = power[floor(Game._discard_rng.randomf()*curr_ability.size())]
+		var selected_power = power[randi() % curr_ability.size()]
 		curr_ability.erase(selected_power)
 	return curr_ability
 

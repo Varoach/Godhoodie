@@ -81,6 +81,9 @@ margin_bottom = 12.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
+card_spacing = Vector2( 40, 0 )
+offset = Vector2( 0, 80 )
+card_ratio = 1.0
 
 [node name="items_container" type="VBoxContainer" parent="container/horizontal_container"]
 margin_left = 1279.0
@@ -104,10 +107,8 @@ __meta__ = {
 }
 
 [node name="items_scroll" type="ScrollContainer" parent="container/horizontal_container/items_container/items_frame"]
-margin_left = -1.33032
-margin_right = 10.6697
-margin_bottom = 12.0
-rect_clip_content = false
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 __meta__ = {
@@ -115,11 +116,14 @@ __meta__ = {
 }
 
 [node name="items" type="Control" parent="container/horizontal_container/items_container/items_frame/items_scroll"]
-margin_right = 12.0
-margin_bottom = 12.0
+margin_right = 1225.0
+margin_bottom = 754.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
+card_spacing = Vector2( 40, 0 )
+offset = Vector2( 0, 80 )
+card_ratio = 1.0
 
 [node name="jutsus_container" type="VBoxContainer" parent="container/horizontal_container"]
 margin_left = 2554.0
