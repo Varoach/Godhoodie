@@ -19,6 +19,7 @@ func _init():
 
 func _ready():
 	_is_ready = true
+	healthbar.set_position(Vector2(0, $character/appearance.get_rect().position.y*$character/appearance.scale.y) + hpOffset)
 	_update_enemy()
 
 func _update_enemy():
@@ -73,3 +74,10 @@ func cast(ability):
 		type = "heal"
 	Game.enemy_use(type, target, ability.values()[0])
 	$animations.play("attack")
+
+func enemy_setup(enemy_id):
+	var single_enemy = load(EnemyDB.get_enemy(enemy_id)["path"])
+	var enemy = single_enemy.instance()
+	enemy.set_meta("id", enemy_id)
+	enemy.abilities = EnemyDB.get_enemy(enemy_id)["abilities"]
+	return enemy

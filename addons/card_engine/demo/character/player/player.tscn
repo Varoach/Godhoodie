@@ -7,5 +7,6 @@
 script = ExtResource( 2 )
 
 [node name="healthbar" parent="character" index="2"]
+visible = false
 max_value = 20.0
 value = 20.0

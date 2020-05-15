@@ -34,7 +34,7 @@ func _enter_tree():
 		preload("res://addons/card_engine/icons/material-node.png"))
 	
 	add_custom_type(
-		"WeaponWidget", "Node2D",
+		"WeaponWidget", "VBoxContainer",
 		preload("res://addons/card_engine/widgets/widget_weapon.gd"),
 		preload("res://addons/card_engine/icons/weapon-node.png"))
 

@@ -31,6 +31,11 @@ CardEngine="*res://addons/card_engine/card_engine.gd"
 Game="*res://addons/card_engine/demo/game.gd"
 EnemyEngine="*res://addons/card_engine/demo/character/enemy/enemy_engine.gd"
 Inventory="*res://addons/card_engine/demo/Inventory/inventory.gd"
+ItemDB="*res://addons/card_engine/demo/items/ItemDB.gd"
+ItemUses="*res://addons/card_engine/demo/item_use.gd"
+EnemyDB="*res://addons/card_engine/demo/character/enemy/EnemyDB.gd"
+WeaponDB="*res://addons/card_engine/demo/weapons/WeaponDB.gd"
+State="*res://addons/card_engine/demo/State.gd"
 
 [display]
 
@@ -39,17 +44,50 @@ window/size/height=2160
 window/size/test_width=1920
 window/size/test_height=1080
 window/stretch/mode="2d"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep_height"
 
 [editor_plugins]
 
 enabled=PoolStringArray( "card_engine" )
+
+[importer_defaults]
+
+texture={
+"compress/bptc_ldr": 0,
+"compress/hdr_mode": 0,
+"compress/lossy_quality": 0.7,
+"compress/mode": 0,
+"compress/normal_map": 0,
+"detect_3d": true,
+"flags/anisotropic": false,
+"flags/filter": true,
+"flags/mipmaps": true,
+"flags/repeat": 0,
+"flags/srgb": 2,
+"process/HDR_as_SRGB": false,
+"process/fix_alpha_border": true,
+"process/invert_color": false,
+"process/premult_alpha": false,
+"size_limit": 0,
+"stream": false,
+"svg/scale": 1.0
+}
 
 [input]
 
 grab={
 "deadzone": 0.5,
 "events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+turn_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":81,"unicode":0,"echo":false,"script":null)
+ ]
+}
+turn_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":69,"unicode":0,"echo":false,"script":null)
  ]
 }
 

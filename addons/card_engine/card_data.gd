@@ -12,6 +12,7 @@ var targets  = ""
 var images   = {} # Lists the different image used to represent this card
 var values   = {} # Lists the different numerical values for this card
 var texts    = {} # Lists the different texts displayed on the card
+var bars     = {}
 
 # Gameplay data
 var player = null # Specifies to which player the card belongs
@@ -31,6 +32,7 @@ func duplicate():
 	copy.images   = images.duplicate()
 	copy.values   = values.duplicate()
 	copy.texts    = texts.duplicate()
+	copy.bars     = bars.duplicate()
 	
 	copy.player   = player
 	copy.origin   = origin

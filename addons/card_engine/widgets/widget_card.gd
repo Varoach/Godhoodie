@@ -18,6 +18,7 @@ class AnimationState extends Reference:
 	var scale = Vector2(1.0, 1.0)
 
 # The size the card should be if no specific size apply
+#export(Vector2) var default_size = Vector2(1,1)
 export(Vector2) var default_size = Vector2(1500, 3000)
 # Animation speed in second
 export(float) var animation_speed = 1
@@ -59,6 +60,15 @@ func _ready():
 func _process(delta):
 	if not _animation.is_active():
 		_animation.start()
+	if $animations.is_playing():
+		var temp_scale = Vector2(0, scale.y)
+		$animations.get_animation("flip").track_set_key_value(0,0,scale)
+		$animations.get_animation("flip").track_set_key_value(0,1,temp_scale)
+		$animations.get_animation("flip").track_set_key_value(0,2,scale)
+		$animations.get_animation("flip_back").track_set_key_value(0,0,scale)
+		$animations.get_animation("flip_back").track_set_key_value(0,1,temp_scale)
+		$animations.get_animation("flip_back").track_set_key_value(0,2,scale)
+		yield(get_tree().create_timer(0.1), "timeout")
 
 func _enter_tree():
 	pass
@@ -117,7 +127,6 @@ func push_animation_state(pos, rot, scale_ratio, is_pos_relative=false, is_rot_r
 	state.rot = rot if !is_rot_relative else previous_state.rot + rot
 	state.scale = scale_ratio if !is_scale_relative else previous_state.scale*scale_ratio
 	_animation_stack.push_back(state)
-	#_animation_stack.call_deferred("push_back(state)")
 	_animate(previous_state, state)
 
 func save_animation_state():
@@ -175,9 +184,11 @@ func _update_card():
 
 func _on_mouse_area_entered():
 	emit_signal("mouse_entered")
+	$animations.play("flip")
 
 func _on_mouse_area_exited():
 	emit_signal("mouse_exited")
+	$animations.play("flip_back")
 
 func _on_mouse_area_event(event):
 	if event is InputEventMouseMotion:

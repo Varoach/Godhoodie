@@ -7,9 +7,11 @@ export(Vector2) var offset = Vector2(0, 0)
 
 export(int) var centered_vertical_offset = 400
 # Number of columns
-export(int) var columns = 3
+export(int) var columns = 4
 
-export(float) var card_ratio = 0.6
+export(float) var card_ratio = 1
+
+var card_max = 8
 
 signal highlight()
 signal unhighlight()
@@ -17,7 +19,7 @@ signal play(card)
 
 var grabbed_offset = Vector2(0,-50)
 
-onready var inventory = get_node("../../../../../..")
+onready var inventory = get_node("../../../../..")
 var _container = null
 var _focused_card = null
 var _active_cards = Node2D.new()
@@ -25,13 +27,15 @@ var _used_cards = Node2D.new()
 export(NodePath) var use_point
 
 func _ready():
+	print(inventory)
 #	add_child(_active_cards)
 #	add_child(_discarded_cards)
 	connect("resized", self, "_on_resized")
+	inventory.connect("jutsu_played", self, "_on_card_played")
 
 func _process(delta):
 	if _focused_card != null and _focused_card.drag:
-		_focused_card.position = get_global_mouse_position() + grabbed_offset
+		_focused_card.global_position = get_global_mouse_position() + grabbed_offset
 
 func set_container(container):
 	_container = container
@@ -60,9 +64,6 @@ func _update_grid():
 	
 	_on_resized()
 
-func _update_grid_play():
-	pass
-
 func _on_resized():
 	yield(get_tree(), "idle_frame")
 	var card_index = 0
@@ -72,8 +73,8 @@ func _on_resized():
 	
 	# Size calculations
 	var card_width = round((rect_size.x - (columns+1)*card_spacing.x) / columns)
-	var ratio = card_width / card_widget.default_size.x*card_ratio
-	var size = Vector2(card_width, round(card_widget.default_size.y*card_ratio * ratio))
+	var ratio = (card_width / card_widget.default_size.x)
+	var size = Vector2(card_width, round(card_widget.default_size.y * ratio))
 		
 	for card_widget in get_children():
 		# Position calculations
@@ -83,8 +84,10 @@ func _on_resized():
 		
 		if row > final_row:
 			final_row = row
-		
-		card_widget.push_animation_state(pos, 0, card_widget.calculate_scale(size), false, false, false)
+		card_widget.position = pos
+		card_widget.scale = card_widget.calculate_scale(size) * card_ratio
+		card_widget.save_animation_state()
+#		card_widget.push_animation_state(pos, 0, card_widget.calculate_scale(size) * card_ratio, false, false, false)
 		
 		card_index += 1
 	
@@ -95,13 +98,14 @@ func set_focused_card(card):
 	if _focused_card != null: return
 	_focused_card = card
 	_focused_card.bring_front()
-	card.push_animation_state(Vector2(0, 0), 0, Vector2(1.05, 1.05), true, true, true)
+	card.push_animation_state(Vector2(0, 0), 0, Vector2(1.40, 1.40), true, true, true)
 
 func unset_focused_card(card):
 	if _focused_card != card: return
-	_focused_card.pop_animation_state()
-	_focused_card.reset_z_index()
+	card.pop_animation_state()
 	_focused_card = null
+	yield(get_tree().create_timer(0.008), "timeout")
+	card.reset_z_index()
 
 func unset_selected_card(card):
 	if _focused_card != card: return
@@ -119,7 +123,6 @@ func _on_card_left_pressed(card):
 		unset_highlight_card(card)
 	else:
 		_focused_card.drag = true
-		_focused_card.set_as_toplevel(true)
 
 func _on_card_left_released(card):
 	if _focused_card != card: return
@@ -128,12 +131,12 @@ func _on_card_left_released(card):
 		play(card)
 
 func _on_card_right_pressed(card):
+	return
 	if _focused_card != card: return
 	if _focused_card.drag: return
 	if _focused_card.highlight:
 		unset_highlight_card(card)
 	else:
-		_focused_card.set_as_toplevel(true)
 		card.highlight = true
 		set_highlight_card(card)
 		card.mouse_disconnect()
@@ -162,32 +165,19 @@ func play(card):
 	if _focused_card != card: return
 	card.set_as_toplevel(false)
 	card.drag = false
-	if Game._current_step == 1 and inventory.played == false and playable(card):
+	emit_signal("play", card, card._card_data.targets, name, _container, card._card_data.bars)
+
+func _on_card_played(card, status, container):
+	_container = container
+	if status:
 		_focused_card = null
-		inventory.played = true
-		if name == "items" or name == "weapons":
-			_container.remove(card.get_index())
-			_update_grid()
+#		_container.remove(card.get_index())
+#		_update_grid()
 		_on_resized()
-		emit_signal("play", card, name)
 	else:
 		card.pop_animation_state()
 		unset_focused_card(card)
 		_on_resized()
-		set_focused_card(card)
-
-func playable(card):
-	var targets = card._card_data.targets
-	if targets == "single":
-		if $"../../../../../../.."._check_targets() != null:
-			return true
-		else:
-			return false
-	elif targets != "single":
-		if $"../../../../../../../Playable".get_rect().has_point(get_global_mouse_position()):
-			return true
-		else:
-			return false
 
 func _remove_card_widget(card):
 	for card_widget in _active_cards.get_children():

@@ -13,6 +13,9 @@
         "cost": 1,
         "attack": 1
       },
+      "bars":{
+        "spirit": 2
+      },
       "texts": {
         "name": "The Sword 1",
         "type": "attack",
@@ -33,6 +36,9 @@
         "attack": 4,
         "vulnerable": 1
       },
+      "bars":{
+        "spirit": 2
+      },
       "texts": {
         "name": "Two Hands Wack 4",
         "type": "attack",
@@ -51,6 +57,9 @@
       "values": {
         "cost": 1,
         "attack": 2
+      },
+      "bars":{
+        "spirit": 1
       },
       "texts": {
         "name": "The Sword 2",
@@ -71,6 +80,9 @@
         "cost": 2,
         "attack": 3,
         "vulnerable": 1
+      },
+      "bars":{
+        "spirit": 2
       },
       "texts": {
         "name": "Two Hands Wack 3",

@@ -5,12 +5,9 @@ const TEXT_ANIM_SPEED = 2.0
 var _animation = Tween.new()
 var _player_characters = {
 		"fighter": preload("res://addons/card_engine/demo/character/player/fighter/fighter.tscn")
-		#"mage": preload("res://addons/card_engine/demo/character/player/mage/mage.tscn")
 	}
-var _enemy_characters = {
-		"enemy1": preload("res://addons/card_engine/demo/character/enemy/enemy1/enemy1.tscn"),
-		"enemy2": preload("res://addons/card_engine/demo/character/enemy/enemy2/enemy2.tscn")
-	}
+
+var _enemies = preload("res://addons/card_engine/demo/character/enemy/current_enemy.gd").new()
 
 var weapon_ref = funcref(Game, "weapon_use")
 var item_ref = funcref(Game, "item_use")
@@ -22,6 +19,7 @@ var targets = []
 var enemy_targets = []
 var enemy_positions = []
 var possible_enemy_positions = []
+var end_turn = false
 
 var _focused_target = null
 
@@ -34,7 +32,11 @@ func _init():
 	_animation.connect("tween_completed", self, "_on_animation_completed")
 
 func _ready():
+	Game.moves = Game.max_moves
+	$TurnCon/TurnButton/Label.text = String(Game.moves)
+	Game.curr_bars = Game.bars.duplicate()
 	$CanvasLayer/hand.set_container(Game.player_hand)
+	$Inventory.connect("play", self, "_on_play")
 	
 	#Game.player_deck.connect("size_changed", self, "_update_deck")
 	#_update_deck(Game.player_deck.size())
@@ -45,8 +47,8 @@ func _ready():
 	Game.player_discard.connect("size_changed", self, "_update_discard_pile")
 	_update_discard_pile(Game.player_discard.size())
 	
-	Game.connect("player_spirit_changed", self, "_update_player_spirit")
-	_update_player_spirit()
+#	Game.connect("player_spirit_changed", self, "_update_player_spirit")
+#	_update_player_spirit()
 	
 	Game.connect("turn_started", self, "_on_turn_started")
 	
@@ -55,11 +57,12 @@ func _ready():
 	ready_up()
 	
 	add_targets()
-	
-	emit_signal("inventory_ready")
 
 func _enter_tree():
 	pass
+
+func move_update():
+	$TurnCon/TurnButton/Label.text = String(Game.moves)
 
 func _physics_process(delta):
 	pass
@@ -71,7 +74,8 @@ func ready_up():
 	possible_enemy_positions = [Vector2(0,0), Vector2(-700,0), Vector2(700,0)]
 	var positions = randi() % 3+1
 	for i in range(positions):
-		$enemy_position.add_child(_enemy_characters.values()[randi() % _enemy_characters.size()].instance())
+#		$enemy_position.add_child(_enemy_characters.values()[randi() % _enemy_characters.size()].instance())
+		$enemy_position.add_child(_enemies.enemy_setup(EnemyDB.random_enemy()))
 	if positions == 1:
 		enemy_positions = [possible_enemy_positions[0]]
 	if positions == 2:
@@ -120,7 +124,7 @@ func _update_discard_pile(new_size):
 	$btn_discard_pile/lbl_discard_pile_count.text = "%d" % new_size
 
 func _update_player_spirit():
-	$img_energy/lbl_energy.text = "%d/%d" % [Game.player_spirit, Game.player_max_spirit]
+	$img_energy/lbl_energy.text = "%d/%d" % [Game.spirit, Game.spirit]
 
 func _toggle_in():
 	_animation.interpolate_property(
@@ -148,16 +152,34 @@ func _on_turn_started():
 func _on_animation_completed(object, key):
 	_animation.remove(object, key)
 
-func _on_hand_play(card, hand):
+func _on_play(card, hand, bars = null):
+	if bars != null:
+		for bar in bars:
+			Game.curr_bars[bar] -= bars[bar]
+	Game.emit_signal("player_check")
 	var target = _check_targets()
-	Game._stepper.start()
 	if hand in hand_use:
 		hand_use[hand].call_func(card, target)
-	_change_step_text("Enemy turn")
+	Game.moves -= 1
+	move_update()
+	$Inventory.played = false
+
+func end_turn():
+	if $Inventory.played:
+		return
+	$Inventory.played = true
+	Game.curr_bars = Game.bars.duplicate()
+	Game.emit_signal("player_check")
+	Game._stepper.start()
+	_change_step_text("Turn Ended")
 	yield(Game._stepper,"timeout")
+	_change_step_text("Enemy turn")
 	for child in $enemy_position.get_children():
 		child.play_turn()
 		yield(Game._stepper,"timeout")
+	_change_step_text("Your turn")
+	Game.moves = Game.max_moves
+	move_update()
 	$Inventory.played = false
 
 func set_focused_target(target):
@@ -181,6 +203,3 @@ func _check_targets():
 			current_target = person
 	if current_target != null:
 		return current_target
-
-func enemy_turn():
-	pass

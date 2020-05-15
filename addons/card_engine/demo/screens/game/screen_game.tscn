@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://addons/card_engine/demo/screens/game/screen_game.gd" type="Script" id=1]
 [ext_resource path="res://addons/card_engine/demo/screens/game/background.png" type="Texture" id=2]
@@ -13,6 +13,8 @@
 [ext_resource path="res://addons/card_engine/demo/screens/game/next-turn-icon.png" type="Texture" id=11]
 [ext_resource path="res://addons/card_engine/demo/screens/game/energy_bg.png" type="Texture" id=12]
 [ext_resource path="res://addons/card_engine/demo/Inventory/inventory.tscn" type="PackedScene" id=13]
+[ext_resource path="res://addons/card_engine/demo/screens/game/UI/player_ui.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/card_engine/demo/screens/game/UI/TurnButton.tscn" type="PackedScene" id=15]
 
 [sub_resource type="DynamicFont" id=1]
 size = 30
@@ -258,9 +260,9 @@ valign = 1
 
 [node name="lbl_step" type="Label" parent="."]
 margin_left = 60.0
-margin_top = 226.0
+margin_top = 273.0
 margin_right = 3780.0
-margin_bottom = 376.0
+margin_bottom = 452.0
 custom_fonts/font = SubResource( 3 )
 text = "EMPTY"
 align = 1
@@ -280,7 +282,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="playerui" parent="." instance=ExtResource( 14 )]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -1860.0
+margin_top = 58.0
+margin_right = -738.0
+margin_bottom = 216.0
+mouse_filter = 2
+
 [node name="Inventory" parent="." instance=ExtResource( 13 )]
+
+[node name="TurnCon" type="CenterContainer" parent="."]
+anchor_right = 1.0
+margin_bottom = 328.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TurnButton" parent="TurnCon" instance=ExtResource( 15 )]
 [connection signal="inventory_ready" from="." to="Inventory" method="_on_inventory_ready"]
 [connection signal="highlight" from="CanvasLayer/hand" to="." method="_toggle_in"]
 [connection signal="play" from="CanvasLayer/hand" to="." method="_on_hand_play"]
@@ -288,6 +309,7 @@ __meta__ = {
 [connection signal="pressed" from="btn_exit" to="." method="_on_btn_exit_pressed"]
 [connection signal="pressed" from="btn_draw_pile" to="." method="_on_btn_draw_pile_pressed"]
 [connection signal="pressed" from="btn_discard_pile" to="." method="_on_btn_discard_pile_pressed"]
+[connection signal="pressed" from="TurnCon/TurnButton" to="." method="end_turn"]
 
 [editable path="btn_exit"]
 

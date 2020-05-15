@@ -62,6 +62,7 @@ func _load_cards(raw_data):
 		card.images   = _extract_data(cards[card_id], "images", {})
 		card.values   = _extract_data(cards[card_id], "values", {})
 		card.texts    = _extract_data(cards[card_id], "texts", {})
+		card.bars     = _extract_data(cards[card_id], "bars", {})
 		
 		_cards[card_id] = card
 

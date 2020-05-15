@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/card_engine/demo/Inventory/player_inventory.gd" type="Script" id=1]
 [ext_resource path="res://addons/card_engine/widgets/widget_grid.gd" type="Script" id=2]
+[ext_resource path="res://addons/card_engine/widgets/widget_item_grid.gd" type="Script" id=3]
+[ext_resource path="res://addons/card_engine/widgets/widget_weapon.gd" type="Script" id=4]
 
 [node name="Inventory" type="Control"]
 anchor_top = 0.623
@@ -20,6 +22,7 @@ anchor_left = 0.001
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -0.843
+mouse_filter = 1
 color = Color( 0.631373, 0.552941, 0.341176, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -28,35 +31,36 @@ __meta__ = {
 [node name="container" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 30.0
-margin_top = 30.0
-margin_right = -30.0
-margin_bottom = -30.0
+margin_left = 15.0
+margin_top = 35.0
+margin_right = -15.0
+margin_bottom = -35.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="horizontal_container" type="HBoxContainer" parent="container"]
-margin_right = 3783.0
-margin_bottom = 754.0
-custom_constants/separation = 50
+margin_right = 3815.0
+margin_bottom = 744.0
+custom_constants/separation = 20
 alignment = 1
 
 [node name="weapons_container" type="VBoxContainer" parent="container/horizontal_container"]
-margin_left = 4.0
-margin_right = 1229.0
-margin_bottom = 754.0
+margin_right = 1225.0
+margin_bottom = 744.0
 size_flags_vertical = 3
 
 [node name="weapons_frame" type="ColorRect" parent="container/horizontal_container/weapons_container"]
 margin_right = 1225.0
-margin_bottom = 754.0
+margin_bottom = 744.0
 rect_min_size = Vector2( 1225, 0 )
+mouse_filter = 1
 size_flags_vertical = 3
 color = Color( 1, 0.960784, 0.803922, 1 )
 
 [node name="Label" type="Label" parent="container/horizontal_container/weapons_container/weapons_frame"]
+visible = false
 margin_top = -18.0
 margin_right = 1283.0
 margin_bottom = -4.0
@@ -65,40 +69,33 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="weapons_scroll" type="ScrollContainer" parent="container/horizontal_container/weapons_container/weapons_frame"]
-margin_right = 12.0
-margin_bottom = 12.0
-rect_clip_content = false
-size_flags_vertical = 3
-scroll_horizontal_enabled = false
+[node name="weapons" type="VBoxContainer" parent="container/horizontal_container/weapons_container/weapons_frame"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="weapons" type="Control" parent="container/horizontal_container/weapons_container/weapons_frame/weapons_scroll"]
-margin_right = 12.0
-margin_bottom = 12.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource( 2 )
-card_spacing = Vector2( 40, 0 )
-offset = Vector2( 0, 80 )
-card_ratio = 1.0
-
 [node name="items_container" type="VBoxContainer" parent="container/horizontal_container"]
-margin_left = 1279.0
-margin_right = 2504.0
-margin_bottom = 754.0
+margin_left = 1245.0
+margin_right = 2570.0
+margin_bottom = 744.0
+rect_min_size = Vector2( 1325, 0 )
+alignment = 1
 
 [node name="items_frame" type="ColorRect" parent="container/horizontal_container/items_container"]
-margin_right = 1225.0
-margin_bottom = 754.0
+margin_right = 1325.0
+margin_bottom = 744.0
 rect_min_size = Vector2( 1225, 0 )
-size_flags_horizontal = 5
-size_flags_vertical = 3
+size_flags_horizontal = 7
+size_flags_vertical = 7
 color = Color( 1, 0.960784, 0.803922, 1 )
 
 [node name="Label" type="Label" parent="container/horizontal_container/items_container/items_frame"]
+visible = false
 margin_top = -18.0
 margin_bottom = -4.0
 text = "Weapons"
@@ -106,39 +103,32 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="items_scroll" type="ScrollContainer" parent="container/horizontal_container/items_container/items_frame"]
+[node name="items" type="Control" parent="container/horizontal_container/items_container/items_frame"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-size_flags_vertical = 3
-scroll_horizontal_enabled = false
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="items" type="Control" parent="container/horizontal_container/items_container/items_frame/items_scroll"]
-margin_right = 1225.0
-margin_bottom = 754.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource( 2 )
-card_spacing = Vector2( 40, 0 )
-offset = Vector2( 0, 80 )
-card_ratio = 1.0
-
 [node name="jutsus_container" type="VBoxContainer" parent="container/horizontal_container"]
-margin_left = 2554.0
-margin_right = 3779.0
-margin_bottom = 754.0
+margin_left = 2590.0
+margin_right = 3815.0
+margin_bottom = 744.0
 size_flags_vertical = 3
+alignment = 1
 
 [node name="jutsus_frame" type="ColorRect" parent="container/horizontal_container/jutsus_container"]
 margin_right = 1225.0
-margin_bottom = 754.0
+margin_bottom = 744.0
 rect_min_size = Vector2( 1225, 0 )
 size_flags_vertical = 3
 color = Color( 1, 0.960784, 0.803922, 1 )
 
 [node name="Label" type="Label" parent="container/horizontal_container/jutsus_container/jutsus_frame"]
+visible = false
 margin_top = -18.0
 margin_bottom = -4.0
 text = "Weapons"
@@ -146,24 +136,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="jutsus_scroll" type="ScrollContainer" parent="container/horizontal_container/jutsus_container/jutsus_frame"]
+[node name="jutsus" type="Control" parent="container/horizontal_container/jutsus_container/jutsus_frame"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 1220.0
 margin_bottom = 750.0
-size_flags_vertical = 3
-follow_focus = true
-scroll_horizontal_enabled = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="jutsus" type="Control" parent="container/horizontal_container/jutsus_container/jutsus_frame/jutsus_scroll"]
-margin_right = 1215.0
-margin_bottom = 745.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
-card_spacing = Vector2( 40, 0 )
-offset = Vector2( 0, 80 )
-card_ratio = 1.0
+card_spacing = Vector2( 25, 0 )
+offset = Vector2( 0, 55 )
