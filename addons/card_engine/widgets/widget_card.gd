@@ -12,6 +12,16 @@ signal left_released()#button)
 signal right_pressed()
 signal right_released()
 
+var id       = "" # Identifies the card, unique in the library
+var category = "" # Specifies the card's category
+var type     = "" # Specifies the card's type
+var tags     = [] # Lists additional specifiers for the card
+var targets  = ""
+var images   = {} # Lists the different image used to represent this card
+var values   = {} # Lists the different numerical values for this card
+var texts    = {} # Lists the different texts displayed on the card
+var bars     = {}
+
 class AnimationState extends Reference:
 	var pos = Vector2(0.0, 0.0)
 	var rot = 0.0
@@ -25,13 +35,15 @@ export(float) var animation_speed = 1
 
 var default_z = 0 setget set_default_z
 
-var _card_data = null
 var _is_ready = false
 var _animation = Tween.new()
 var _animation_stack = []
+var _animation_stack_global = []
 var drag = false
 var highlight = false
 var _card_index= 1
+var ready = false
+var before_scale = Vector2()
 
 func _init():
 	add_child(_animation)
@@ -54,37 +66,40 @@ func _ready():
 	$mouse_area.connect("gui_input", self, "_on_mouse_area_event")
 	
 	_animation.connect("tween_completed", self, "_on_animation_completed")
-	
-	_update_card()
 
 func _process(delta):
 	if not _animation.is_active():
 		_animation.start()
-	if $animations.is_playing():
-		var temp_scale = Vector2(0, scale.y)
-		$animations.get_animation("flip").track_set_key_value(0,0,scale)
-		$animations.get_animation("flip").track_set_key_value(0,1,temp_scale)
-		$animations.get_animation("flip").track_set_key_value(0,2,scale)
-		$animations.get_animation("flip_back").track_set_key_value(0,0,scale)
-		$animations.get_animation("flip_back").track_set_key_value(0,1,temp_scale)
-		$animations.get_animation("flip_back").track_set_key_value(0,2,scale)
-		yield(get_tree().create_timer(0.1), "timeout")
+
+func _update_card():
+	# Images update
+	for image in images:
+		var node = find_node(FORMAT_IMAGE % image)
+		if node != null:
+			var id = images[image]
+			if id != "default":
+				node.texture = load(Interface.card_image(image, id))
+	
+	# Value update
+	for value in values:
+		var node = find_node(FORMAT_LABEL % value)
+		if node != null:
+			node.text = "%d" % Interface.final_value(self, value)
+	
+	# Text update
+	for text in texts:
+		var node = find_node(FORMAT_LABEL % text)
+		if node != null:
+			if node is RichTextLabel:
+				node.bbcode_text = Interface.final_text(self, text)
+			else:
+				node.text = Interface.final_text(self, text)
 
 func _enter_tree():
 	pass
 
 func _exit_tree():
 	_animation.stop_all()
-
-# Sets the data to use for displaying a card with this widget
-func set_card_data(card_data):
-	_card_data = card_data
-	_update_card()
-	_card_data.connect("changed", self, "_update_card")
-
-# Returns the date used by this widget
-func get_card_data():
-	return _card_data
 
 # Makes the card appear in front of others Node2D
 func bring_front():
@@ -110,6 +125,28 @@ func push_animation_state_from_current():
 	state.rot = rotation_degrees
 	state.scale = scale
 	_animation_stack.push_back(state)
+
+func display_center():
+	_animation_stack.pop_back()
+	push_animation_state_global(Vector2((get_viewport_rect().size/2).x,(get_viewport_rect().size/2).y-250), 0, 3, false, false, true)
+
+func push_animation_state_global(pos, rot, scale_ratio, is_pos_relative=false, is_rot_relative=false, is_scale_relative=false):
+	var previous_state = null
+	if !_animation_stack_global.empty():
+		previous_state = _animation_stack_global.back()
+	else:
+		previous_state = AnimationState.new()
+		previous_state.pos = global_position
+		previous_state.rot = global_rotation_degrees
+		previous_state.scale = before_scale
+		_animation_stack_global.push_back(previous_state)
+	
+	var state = AnimationState.new()
+	state.pos = pos if !is_pos_relative else previous_state.pos + pos
+	state.rot = rot if !is_rot_relative else previous_state.rot + rot
+	state.scale = scale_ratio if !is_scale_relative else previous_state.scale*scale_ratio
+	_animation_stack_global.push_back(state)
+	_animate_global(previous_state, state)
 
 # Adds an animation state from the given values and animate the card to the state
 func push_animation_state(pos, rot, scale_ratio, is_pos_relative=false, is_rot_relative=false, is_scale_relative=false):
@@ -145,6 +182,14 @@ func pop_animation_state():
 		_animate(state, previous_state)
 		#call_deferred("_animate(state, previous_state)")
 
+func pop_animation_state_global():
+	if _animation_stack_global.empty(): return
+	var state = _animation_stack_global.pop_back()
+	if !_animation_stack_global.empty():
+		var previous_state = _animation_stack_global.back()
+		_animate_global(state, previous_state)
+	_animation_stack_global.clear()
+
 # Internal animation from one state to another
 func _animate(from_state, to_state):
 	_animation.interpolate_property(
@@ -156,31 +201,15 @@ func _animate(from_state, to_state):
 	_animation.interpolate_property(
 		self, "scale", from_state.scale, to_state.scale, animation_speed, Tween.TRANS_BACK, Tween.EASE_OUT)
 
-func _update_card():
-	if _card_data == null || !_is_ready: return
-	
-	# Images update
-	for image in _card_data.images:
-		var node = find_node(FORMAT_IMAGE % image)
-		if node != null:
-			var id = _card_data.images[image]
-			if id != "default":
-				node.texture = load(CardEngine.card_image(image, id))
-	
-	# Value update
-	for value in _card_data.values:
-		var node = find_node(FORMAT_LABEL % value)
-		if node != null:
-			node.text = "%d" % CardEngine.final_value(_card_data, value)
-	
-	# Text update
-	for text in _card_data.texts:
-		var node = find_node(FORMAT_LABEL % text)
-		if node != null:
-			if node is RichTextLabel:
-				node.bbcode_text = CardEngine.final_text(_card_data, text)
-			else:
-				node.text = CardEngine.final_text(_card_data, text)
+func _animate_global(from_state, to_state):
+	_animation.interpolate_property(
+		self, "global_position", from_state.pos, to_state.pos, animation_speed, Tween.TRANS_SINE, Tween.EASE_OUT)
+
+	_animation.interpolate_property(
+		self, "global_rotation_degrees", from_state.rot, to_state.rot, animation_speed, Tween.TRANS_SINE, Tween.EASE_OUT)
+
+	_animation.interpolate_property(
+		self, "global_scale", from_state.scale, to_state.scale, animation_speed, Tween.TRANS_SINE, Tween.EASE_OUT)
 
 func _on_mouse_area_entered():
 	emit_signal("mouse_entered")
@@ -188,6 +217,9 @@ func _on_mouse_area_entered():
 
 func _on_mouse_area_exited():
 	emit_signal("mouse_exited")
+	$animations.play("flip_back")
+
+func flip_back():
 	$animations.play("flip_back")
 
 func _on_mouse_area_event(event):
@@ -207,7 +239,6 @@ func _on_mouse_area_event(event):
 
 func _on_animation_completed(object, key):
 	_animation.remove(object, key)
-	#_animation.call_deferred("remove(object,key)")
 	
 func mouse_disconnect():
 	$mouse_area.disconnect("mouse_exited", self, "_on_mouse_area_exited")

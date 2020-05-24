@@ -1,0 +1,84 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Inventory/player_inventory.gd" type="Script" id=1]
+[ext_resource path="res://addons/card_engine/widgets/widget_grid.gd" type="Script" id=2]
+[ext_resource path="res://items/item_grid.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/card_engine/widgets/widget_weapon.gd" type="Script" id=4]
+[ext_resource path="res://Inventory/Play_Panel.png" type="Texture" id=5]
+
+[node name="Inventory" type="Control"]
+pause_mode = 2
+anchor_top = 0.623
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -3.0
+margin_top = 0.319946
+mouse_filter = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="background" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 5 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="horizontal_container" type="HBoxContainer" parent="background"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 113.0
+margin_top = 57.0
+margin_right = -112.0
+margin_bottom = -55.0
+custom_constants/separation = 47
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="weapons_container" type="Control" parent="background/horizontal_container"]
+margin_right = 1149.0
+margin_bottom = 702.0
+rect_min_size = Vector2( 1149, 700 )
+mouse_filter = 1
+
+[node name="weapons" type="VBoxContainer" parent="background/horizontal_container/weapons_container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="items_container" type="Control" parent="background/horizontal_container"]
+margin_left = 1196.0
+margin_right = 2416.0
+margin_bottom = 702.0
+rect_min_size = Vector2( 1220, 0 )
+mouse_filter = 1
+size_flags_vertical = 3
+
+[node name="items" parent="background/horizontal_container/items_container" instance=ExtResource( 3 )]
+
+[node name="jutsus_container" type="Control" parent="background/horizontal_container"]
+margin_left = 2463.0
+margin_right = 3612.0
+margin_bottom = 702.0
+rect_min_size = Vector2( 1149, 0 )
+mouse_filter = 1
+
+[node name="jutsus" type="Control" parent="background/horizontal_container/jutsus_container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+card_spacing = Vector2( 25, 14 )
+offset = Vector2( 0, 55 )

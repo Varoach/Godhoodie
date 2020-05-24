@@ -8,14 +8,9 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Node",
-"class": "card_state",
-"language": "GDScript",
-"path": "res://addons/card_engine/demo/card_state.gd"
-} ]
+_global_script_classes=[  ]
 _global_script_class_icons={
-"card_state": ""
+
 }
 
 [application]
@@ -26,16 +21,14 @@ config/icon="res://icon.png"
 
 [autoload]
 
-CEInterface="*res://addons/card_engine/demo/interface.gd"
-CardEngine="*res://addons/card_engine/card_engine.gd"
-Game="*res://addons/card_engine/demo/game.gd"
-EnemyEngine="*res://addons/card_engine/demo/character/enemy/enemy_engine.gd"
-Inventory="*res://addons/card_engine/demo/Inventory/inventory.gd"
-ItemDB="*res://addons/card_engine/demo/items/ItemDB.gd"
-ItemUses="*res://addons/card_engine/demo/item_use.gd"
-EnemyDB="*res://addons/card_engine/demo/character/enemy/EnemyDB.gd"
-WeaponDB="*res://addons/card_engine/demo/weapons/WeaponDB.gd"
-State="*res://addons/card_engine/demo/State.gd"
+Game="*res://game.gd"
+Inventory="*res://Inventory/inventory.gd"
+ItemDB="*res://items/ItemDB.gd"
+ItemUses="*res://item_use.gd"
+EnemyDB="*res://character/enemy/EnemyDB.gd"
+WeaponDB="*res://weapons/WeaponDB.gd"
+Interface="*res://interface.gd"
+CardDB="*res://cards/CardDB.gd"
 
 [display]
 
@@ -44,11 +37,11 @@ window/size/height=2160
 window/size/test_width=1920
 window/size/test_height=1080
 window/stretch/mode="2d"
-window/stretch/aspect="keep_height"
+window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "card_engine" )
+enabled=PoolStringArray( "card_engine", "notes_tab" )
 
 [importer_defaults]
 

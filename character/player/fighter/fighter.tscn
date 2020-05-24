@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://character/player/player.tscn" type="PackedScene" id=1]
+
+
+[sub_resource type="StreamTexture" id=1]
+flags = 4
+load_path = "res://.import/Untitled_Artwork (1).png-3e1edb7b35e96ede5e56026143381827.stex"
+
+[node name="player" instance=ExtResource( 1 )]
+position = Vector2( 25.3241, -373.098 )
+
+[node name="appearance" parent="character" index="1"]
+scale = Vector2( 0.4, 0.4 )
+texture = SubResource( 1 )

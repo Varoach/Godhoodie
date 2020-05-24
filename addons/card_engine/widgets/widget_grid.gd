@@ -13,62 +13,56 @@ export(float) var card_ratio = 1
 
 var card_max = 8
 
-signal highlight()
-signal unhighlight()
 signal play(card)
 
 var grabbed_offset = Vector2(0,-50)
 
-onready var inventory = get_node("../../../../..")
-var _container = null
+onready var inventory = get_node("../../../..")
 var _focused_card = null
 var _active_cards = Node2D.new()
 var _used_cards = Node2D.new()
 export(NodePath) var use_point
 
 func _ready():
-	print(inventory)
-#	add_child(_active_cards)
-#	add_child(_discarded_cards)
+	CardDB.connect("card_added", self, "_on_card_added")
 	connect("resized", self, "_on_resized")
 	inventory.connect("jutsu_played", self, "_on_card_played")
+	CardDB.pickup_card("two_handse")
+	CardDB.pickup_card("two_handse")
+	CardDB.pickup_card("two_handse")
+	CardDB.pickup_card("two_handse")
 
 func _process(delta):
 	if _focused_card != null and _focused_card.drag:
 		_focused_card.global_position = get_global_mouse_position() + grabbed_offset
 
-func set_container(container):
-	_container = container
-	_container.connect("card_added", self, "_on_container_card_added")
-	_container.connect("multiple_card_added", self, "_on_container_multiple_card_added")
-	_container.connect("card_removed", self, "_on_container_card_removed")
+func _on_card_added():
 	_update_grid()
 
 func _update_grid():
 	for child in get_children():
 		remove_child(child)
 
-	for card in _container.cards():
-		var card_widget = CEInterface.card_instance()
-		card_widget.set_card_data(card)
+	for card in Game.player_inventory.cards:
+		if !card.ready:
+			card.connect("mouse_entered", self, "_on_card_mouse_entered", [card])
+			card.connect("mouse_exited", self, "_on_card_mouse_exited", [card])
+			card.connect("left_pressed", self, "_on_card_left_pressed", [card])
+			card.connect("left_released", self, "_on_card_left_released", [card])
+			card.connect("right_pressed", self, "_on_card_right_pressed", [card])
+			card.connect("right_released", self, "_on_card_right_released", [card])
+			card.connect("mouse_motion", self, "_on_mouse_motion", [card])
+			card.ready = true
 		
-		card_widget.connect("mouse_entered", self, "_on_card_mouse_entered", [card_widget])
-		card_widget.connect("mouse_exited", self, "_on_card_mouse_exited", [card_widget])
-		card_widget.connect("left_pressed", self, "_on_card_left_pressed", [card_widget])
-		card_widget.connect("left_released", self, "_on_card_left_released", [card_widget])
-		card_widget.connect("right_pressed", self, "_on_card_right_pressed", [card_widget])
-		card_widget.connect("right_released", self, "_on_card_right_released", [card_widget])
-		card_widget.connect("mouse_motion", self, "_on_mouse_motion", [card_widget])
-		
-		add_child(card_widget)
+		add_child(card)
 	
 	_on_resized()
 
 func _on_resized():
 	yield(get_tree(), "idle_frame")
 	var card_index = 0
-	var total_card = _container.size()
-	var card_widget = CEInterface.card_instance()
+	var total_card = Game.player_inventory.cards.size()
+	var card_widget = CardDB.custom_card.instance()
 	var final_row = 0
 	
 	# Size calculations
@@ -87,6 +81,7 @@ func _on_resized():
 		card_widget.position = pos
 		card_widget.scale = card_widget.calculate_scale(size) * card_ratio
 		card_widget.save_animation_state()
+		card_widget.before_scale = card_widget.scale
 #		card_widget.push_animation_state(pos, 0, card_widget.calculate_scale(size) * card_ratio, false, false, false)
 		
 		card_index += 1
@@ -98,23 +93,20 @@ func set_focused_card(card):
 	if _focused_card != null: return
 	_focused_card = card
 	_focused_card.bring_front()
-	card.push_animation_state(Vector2(0, 0), 0, Vector2(1.40, 1.40), true, true, true)
+	card.push_animation_state(Vector2(0,0), 0, 1.35, true, false, true)
 
 func unset_focused_card(card):
 	if _focused_card != card: return
 	card.pop_animation_state()
 	_focused_card = null
-	yield(get_tree().create_timer(0.008), "timeout")
 	card.reset_z_index()
 
-func unset_selected_card(card):
-	if _focused_card != card: return
-	_focused_card.pop_animation_state()
-
 func _on_card_mouse_entered(card):
+	if card.highlight: return
 	set_focused_card(card)
 
 func _on_card_mouse_exited(card):
+	if card.highlight: return
 	unset_focused_card(card)
 
 func _on_card_left_pressed(card):
@@ -131,16 +123,15 @@ func _on_card_left_released(card):
 		play(card)
 
 func _on_card_right_pressed(card):
-	return
 	if _focused_card != card: return
 	if _focused_card.drag: return
-	if _focused_card.highlight:
+	if card.highlight:
 		unset_highlight_card(card)
-	else:
-		card.highlight = true
+		inventory.highlight = false
+	elif !inventory.highlight:
 		set_highlight_card(card)
-		card.mouse_disconnect()
-		emit_signal("highlight")
+		inventory.highlight = true
+		inventory.emit_signal("highlight", card)
 
 func _on_card_right_released(card):
 	if _focused_card != card: return
@@ -148,47 +139,33 @@ func _on_card_right_released(card):
 
 func unset_highlight_card(card):
 	if _focused_card != card: return
-#	focused_card.set_as_toplevel(false)
+	card.pop_animation_state_global()
+	inventory.emit_signal("unhighlight", card)
+	card.flip_back()
 	card.highlight = false
-	unset_selected_card(card)
+	card.mouse_disconnect()
+	_focused_card = null
+	yield(get_tree().create_timer(0.6), "timeout")
 	card.mouse_connect()
-	emit_signal("unhighlight")
-	$"../".scroll_vertical_enabled = true
+	
 
 func set_highlight_card(card):
 	if _focused_card != card: return
-#	_focused_card.set_as_toplevel(true)
-	$"../".scroll_vertical_enabled = false
-	_focused_card.push_animation_state(Vector2(rect_size.x/2, centered_vertical_offset), 0, Vector2(1.5,1.5), false, false, true)
+	card.highlight = true
+	card.display_center()
 
 func play(card):
 	if _focused_card != card: return
-	card.set_as_toplevel(false)
 	card.drag = false
-	emit_signal("play", card, card._card_data.targets, name, _container, card._card_data.bars)
+	emit_signal("play", card, card.targets, name, card.bars)
 
-func _on_card_played(card, status, container):
-	_container = container
+func _on_card_played(card, status):
 	if status:
-		_focused_card = null
-#		_container.remove(card.get_index())
-#		_update_grid()
-		_on_resized()
-	else:
-		card.pop_animation_state()
 		unset_focused_card(card)
 		_on_resized()
-
-func _remove_card_widget(card):
-	for card_widget in _active_cards.get_children():
-		if card_widget.get_card_data() == card:
-			_active_cards.remove_child(card_widget)
-			_used_cards.add_child(card_widget)
-			if _apply_discard_transform(card_widget):
-				# If a transform has been applied we wait a second for the animation to finish
-				yield(get_tree().create_timer(0.5), "timeout")
-			_used_cards.remove_child(card_widget)
-			card_widget.queue_free()
+	else:
+		unset_focused_card(card)
+		_on_resized()
 
 func _apply_discard_transform(widget):
 	if not use_point.is_empty():
@@ -199,7 +176,3 @@ func _apply_discard_transform(widget):
 
 func _to_local(point):
 	return get_global_transform().affine_inverse().xform(point)
-
-func _on_container_card_removed(card):
-	_remove_card_widget(card)
-	_on_resized()

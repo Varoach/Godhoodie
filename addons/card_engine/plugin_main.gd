@@ -15,10 +15,6 @@ func _enter_tree():
 		preload("res://addons/card_engine/icons/container-node.png"))
 		
 	add_custom_type(
-		"HandWidget", "Control",
-		preload("res://addons/card_engine/widgets/widget_hand.gd"),
-		preload("res://addons/card_engine/icons/hand-node.png"))
-	add_custom_type(
 		"ItemWidget", "Node2D",
 		preload("res://addons/card_engine/widgets/widget_item.gd"),
 		preload("res://addons/card_engine/icons/item-node.png"))
@@ -42,7 +38,7 @@ func _exit_tree():
 	print("CardEngine disabled")
 	remove_custom_type("CardWidget")
 	remove_custom_type("GridWidget")
-	remove_custom_type("HandWidget")
+	remove_custom_type("ItemGridWidget")
 	remove_custom_type("ItemWidget")
 	remove_custom_type("MaterialWidget")
 	remove_custom_type("WeaponWidget")

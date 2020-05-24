@@ -1,9 +1,6 @@
 extends Control
 
-const custom_item = preload("res://addons/card_engine/demo/items/custom_item.tscn")
-const single_grid = preload("res://addons/card_engine/demo/items/single_grid.tscn")
-
-var items = []
+const single_grid = preload("res://items/single_grid.tscn")
 
 var grid = {}
 var cell_size = 82.5
@@ -11,10 +8,11 @@ var grid_width = 0
 var grid_height = 0
 var curr_grid_width = 10
 var curr_grid_height = 0
+var _focused_item
 
 signal play(item)
 
-onready var inventory = get_node("../../../../..")
+onready var inventory = get_node("../../../..")
 var item_rotate = []
 var item_held = null
 var item_offset = Vector2()
@@ -27,7 +25,13 @@ var item_texture = null
 var item_scale = Vector2(1,1)
 
 func _ready():
+	ItemDB.connect("item_added", self, "_on_item_added")
 	inventory.connect("item_played", self, "_on_item_played")
+	var cell_sizey = {}
+	cell_sizey.x = rect_size.x/16
+	cell_sizey.y = rect_size.y/9
+	cell_size = cell_sizey.values().min()
+	ItemDB.cell_size = cell_size
 	var s = get_grid_size(self)
 	grid_width = s.x
 	grid_height = s.y
@@ -36,7 +40,7 @@ func _ready():
 		grid[x] = {}
 		for y in range(grid_height):
 			grid[x][y] = {}
-			if x < 10: 
+			if x < 10:
 				grid[x][y]["carrying"] = false
 				grid[x][y]["available"] = true
 				grid[x][y]["infected"] = false
@@ -50,10 +54,10 @@ func _ready():
 				grid[x][y]["carrying"] = false
 				grid[x][y]["available"] = false
 				grid[x][y]["infected"] = false
-	pickup_item("potion")
-	pickup_item("potion")
-	pickup_item("fish")
-	pickup_item("kunai")
+	ItemDB.pickup_item("potion")
+	ItemDB.pickup_item("potion")
+	ItemDB.pickup_item("kunai")
+	ItemDB.pickup_item("fish")
 
 func _process(delta):
 	var cursor_pos = get_global_mouse_position()
@@ -73,7 +77,7 @@ func _process(delta):
 		else:
 			turn_off_texture()
 	if item_held == null and item_texture != null:
-			turn_off_texture()
+		turn_off_texture()
 
 func turn_off_texture():
 	if item_texture != null:
@@ -86,7 +90,7 @@ func show_position():
 		return
 	if item_texture == null:
 		reset_item_texture()
-		add_child(item_texture)
+		$items.add_child(item_texture)
 	item_texture.position = Vector2(last_available_pos.g_pos.x*cell_size,last_available_pos.g_pos.y*cell_size)
 
 func new_grid(x, y):
@@ -94,8 +98,7 @@ func new_grid(x, y):
 	var new_child = single_grid.instance()
 	new_child.rect_size = Vector2(cell_size, cell_size)
 	new_child.rect_position = local_pos - Vector2(2,0)
-	new_child.rect_scale = single_grid_scale
-	add_child(new_child)
+	$grid.add_child(new_child)
 
 func insert_item(item):
 	var item_pos = item.global_position + Vector2(cell_size / 2, cell_size / 2)
@@ -104,7 +107,7 @@ func insert_item(item):
 	if is_grid_space_available(g_pos.x, g_pos.y, item_size.x, item_size.y):
 		set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
 		item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-		items.append(item)
+		Game.add_item(item)
 		return true
 	else:
 		return false
@@ -219,7 +222,7 @@ func pos_to_grid_coord(pos):
 	return results
 
 func get_item_under_pos(pos):
-	for item in items:
+	for item in Game.player_inventory.items:
 		if item.get_global_rect().has_point(pos):
 			return item
 	return null
@@ -232,7 +235,7 @@ func grab(cursor_pos):
 			last_container = c
 			item_held.save_item_state()
 			item_offset = item_held.global_position - cursor_pos
-			move_child(item_held, get_child_count())
+			$items.move_child(item_held, get_child_count())
 			item_held.bring_front()
 
 func rotate(rotation):
@@ -251,7 +254,7 @@ func rotate(rotation):
 	elif item_held.flipped != item_texture.flipped or item_held.rotated != item_texture.rotated:
 		turn_off_texture()
 		reset_item_texture()
-		add_child(item_texture)
+		$items.add_child(item_texture)
 
 func reset_item_texture():
 	item_texture = item_held.duplicate()
@@ -271,7 +274,7 @@ func grab_item(pos):
 	var item_size = get_grid_size(item)
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
 	
-	items.remove(items.find(item))
+	Game.remove_item(item)
 	return item
 
 func release(cursor_pos):
@@ -302,28 +305,31 @@ func get_container_under_cursor(cursor_pos):
 		if c.get_global_rect().has_point(cursor_pos):
 			return c
 	return null
-	
 
 func insert_item_at_last_available_spot(item, spot):
 	var g_pos = spot.g_pos
 	var item_size = spot.item_size
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
 	item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-	items.append(item)
+	Game.add_item(item)
 	last_available_pos.clear()
 
 func insert_item_at_first_available_spot(item):
 	for x in range(grid_width):
 		for y in range(grid_height):
-				if spot_check(x,y):
-					item.global_position = rect_global_position + Vector2(x, y) * cell_size
-					if insert_item(item):
-						return true
+			if spot_check(x,y):
+				item.global_position = rect_global_position + Vector2(x, y) * cell_size
+				if insert_item(item):
+					return true
 	return false
 
-func pickup_item(item_id):
-	var item = item_setup(item_id)
-	add_child(item)
+func _on_item_added(item):
+	set_items(item)
+
+func set_items(item):
+	$items.add_child(item)
+	item.set_size(item.size * cell_size)
+	item.set_scale(rect_scale * item_scale)
 	if !insert_item_at_first_available_spot(item):
 		item.queue_free()
 		return false
@@ -333,20 +339,6 @@ func spot_check(x,y):
 	if !grid[x][y]["carrying"] and grid[x][y]["available"] and !grid[x][y]["infected"]:
 		return true
 	return false
-
-func item_setup(item_id):
-	var item = custom_item.instance()
-	item.set_meta("id", item_id)
-	item.set_texture(load(ItemDB.get_item(item_id)["icon"]))
-	item.texture_original = load(ItemDB.get_item(item_id)["icon"])
-	item.texture_rotate = load(ItemDB.get_item(item_id)["icon_rotate"])
-	item.set_size(ItemDB.get_item(item_id)["size"] * cell_size)
-	item.set_scale(rect_scale * item_scale)
-	item.targets = ItemDB.get_item(item_id)["targets"]
-	item.bars = ItemDB.get_item(item_id)["bars"]
-	if ItemDB.get_item(item_id).has("values"):
-		item.values = ItemDB.get_item(item_id)["values"]
-	return item
 
 func _on_item_played(item, status):
 	if status:
@@ -364,3 +356,59 @@ func distance_check():
 	if last_position.distance_to(item_held.global_position) < 300 and !last_available_pos.empty():
 		return true
 	return false
+
+func set_focused_item(item):
+	if _focused_item != null: return
+	_focused_item = item
+	_focused_item.bring_front()
+
+func unset_focused_item(item):
+	if _focused_item != item: return
+	_focused_item = null
+	item.reset_z_index()
+
+func unset_selected_item(item):
+	if _focused_item != item: return
+	_focused_item.pop_animation_state()
+
+func _on_item_mouse_entered(item):
+	if item.highlight: return
+	set_focused_item(item)
+
+func _on_item_mouse_exited(item):
+	if item.highlight: return
+	unset_focused_item(item)
+
+func _on_item_left_pressed(item):
+	if _focused_item != item: return
+	if _focused_item.highlight:
+		unset_highlight_item(item)
+
+func _on_item_left_released(item):
+	if _focused_item != item: return
+	if _focused_item.highlight: return
+
+func _on_item_right_pressed(item):
+	if _focused_item != item: return
+	if _focused_item.drag: return
+	if item_held != null: return
+	if item.highlight:
+		unset_highlight_item(item)
+	else:
+#		set_highlight_item(item)
+		inventory.emit_signal("highlight", item)
+
+func _on_item_right_released(item):
+	if _focused_item != item: return
+	if _focused_item.drag: return
+
+func unset_highlight_item(item):
+	if _focused_item != item: return
+	item.highlight = false
+	item.pop_animation_state_global()
+	inventory.emit_signal("unhighlight", item)
+
+func set_highlight_item(item):
+	if _focused_item != item: return
+	item.highlight = true
+	item.display_center()

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/GUI-Kit-Pack-Free_54.png" type="Texture" id=1]
+[ext_resource path="res://assets/GUI-Kit-Pack-Free_11.png" type="Texture" id=2]
+
+[node name="healthbar" type="TextureProgress"]
+margin_left = -174.737
+margin_top = -43.158
+margin_right = 176.263
+margin_bottom = 40.842
+rect_scale = Vector2( 2, 2 )
+max_value = 10.0
+texture_under = ExtResource( 1 )
+texture_progress = ExtResource( 2 )
+tint_under = Color( 1, 0.34902, 0.34902, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
