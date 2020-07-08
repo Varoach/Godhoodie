@@ -27,10 +27,9 @@ func _ready():
 	CardDB.connect("card_added", self, "_on_card_added")
 	connect("resized", self, "_on_resized")
 	inventory.connect("jutsu_played", self, "_on_card_played")
-	CardDB.pickup_card("two_handse")
-	CardDB.pickup_card("two_handse")
-	CardDB.pickup_card("two_handse")
-	CardDB.pickup_card("two_handse")
+#	CardDB.pickup_card("two_handse")
+#	CardDB.pickup_card("two_handse")
+	_update_grid()
 
 func _process(delta):
 	if _focused_card != null and _focused_card.drag:
@@ -40,28 +39,33 @@ func _on_card_added():
 	_update_grid()
 
 func _update_grid():
+	print(Inventory.player_inventory)
 	for child in get_children():
 		remove_child(child)
 
-	for card in Game.player_inventory.cards:
-		if !card.ready:
-			card.connect("mouse_entered", self, "_on_card_mouse_entered", [card])
-			card.connect("mouse_exited", self, "_on_card_mouse_exited", [card])
-			card.connect("left_pressed", self, "_on_card_left_pressed", [card])
-			card.connect("left_released", self, "_on_card_left_released", [card])
-			card.connect("right_pressed", self, "_on_card_right_pressed", [card])
-			card.connect("right_released", self, "_on_card_right_released", [card])
-			card.connect("mouse_motion", self, "_on_mouse_motion", [card])
-			card.ready = true
-		
-		add_child(card)
-	
+	for card_id in Inventory.player_inventory.cards:
+		set_card(CardDB.card_setup(card_id))
+
 	_on_resized()
+
+func set_card(card):
+	card._update_card()
+	if !card.ready:
+		card.connect("mouse_entered", self, "_on_card_mouse_entered", [card])
+		card.connect("mouse_exited", self, "_on_card_mouse_exited", [card])
+		card.connect("left_pressed", self, "_on_card_left_pressed", [card])
+		card.connect("left_released", self, "_on_card_left_released", [card])
+		card.connect("right_pressed", self, "_on_card_right_pressed", [card])
+		card.connect("right_released", self, "_on_card_right_released", [card])
+		card.connect("mouse_motion", self, "_on_mouse_motion", [card])
+		card.ready = true
+	
+	add_child(card)
 
 func _on_resized():
 	yield(get_tree(), "idle_frame")
 	var card_index = 0
-	var total_card = Game.player_inventory.cards.size()
+	var total_card = Inventory.player_inventory.cards.size()
 	var card_widget = CardDB.custom_card.instance()
 	var final_row = 0
 	
@@ -70,7 +74,7 @@ func _on_resized():
 	var ratio = (card_width / card_widget.default_size.x)
 	var size = Vector2(card_width, round(card_widget.default_size.y * ratio))
 		
-	for card_widget in get_children():
+	for widget in get_children():
 		# Position calculations
 		var col = card_index%columns
 		var row = floor(card_index / columns)
@@ -78,10 +82,10 @@ func _on_resized():
 		
 		if row > final_row:
 			final_row = row
-		card_widget.position = pos
-		card_widget.scale = card_widget.calculate_scale(size) * card_ratio
-		card_widget.save_animation_state()
-		card_widget.before_scale = card_widget.scale
+		widget.position = pos
+		widget.scale = widget.calculate_scale(size) * card_ratio
+		widget.save_animation_state()
+		widget.before_scale = widget.scale
 #		card_widget.push_animation_state(pos, 0, card_widget.calculate_scale(size) * card_ratio, false, false, false)
 		
 		card_index += 1
@@ -115,23 +119,26 @@ func _on_card_left_pressed(card):
 		unset_highlight_card(card)
 	else:
 		_focused_card.drag = true
+		inventory.hand = true
+		Game.player.animation("ready")
 
 func _on_card_left_released(card):
 	if _focused_card != card: return
 	if _focused_card.highlight: return
 	if _focused_card.drag:
+		inventory.hand = false
 		play(card)
 
 func _on_card_right_pressed(card):
 	if _focused_card != card: return
 	if _focused_card.drag: return
-	if card.highlight:
-		unset_highlight_card(card)
-		inventory.highlight = false
-	elif !inventory.highlight:
-		set_highlight_card(card)
-		inventory.highlight = true
-		inventory.emit_signal("highlight", card)
+#	if card.highlight:
+##		unset_highlight_card(card)
+#		inventory.highlight = false
+#	elif !inventory.highlight:
+#		set_highlight_card(card)
+#		inventory.highlight = true
+#		inventory.emit_signal("highlight", card)
 
 func _on_card_right_released(card):
 	if _focused_card != card: return
@@ -143,11 +150,8 @@ func unset_highlight_card(card):
 	inventory.emit_signal("unhighlight", card)
 	card.flip_back()
 	card.highlight = false
-	card.mouse_disconnect()
 	_focused_card = null
 	yield(get_tree().create_timer(0.6), "timeout")
-	card.mouse_connect()
-	
 
 func set_highlight_card(card):
 	if _focused_card != card: return
@@ -166,6 +170,7 @@ func _on_card_played(card, status):
 	else:
 		unset_focused_card(card)
 		_on_resized()
+		Game.player.animation("default")
 
 func _apply_discard_transform(widget):
 	if not use_point.is_empty():

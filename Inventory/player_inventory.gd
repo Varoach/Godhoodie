@@ -1,6 +1,7 @@
 extends Control
 
 var played = false
+var hand = false
 
 signal play(item, hand)
 signal highlight(card)
@@ -50,11 +51,13 @@ func _on_play(item, targets, hand, bars = null):
 func playable(targets):#card._card_data.targets
 	if targets == "none":
 		return false
-	if targets == "single":
+	elif targets == "single":
 		if $".."._check_targets() != null:
 			return true
 		else:
 			return false
+	elif targets == "first":
+		return true
 	elif targets != "single":
 		if $"../Playable".get_rect().has_point(get_global_mouse_position()):
 			return true
@@ -62,6 +65,6 @@ func playable(targets):#card._card_data.targets
 			return false
 
 func character_check(bar, value):
-	if value < Game.curr_bars[bar]:
+	if value <= Game.curr_bars[bar]:
 		return true
 	return false

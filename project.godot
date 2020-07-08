@@ -29,6 +29,7 @@ EnemyDB="*res://character/enemy/EnemyDB.gd"
 WeaponDB="*res://weapons/WeaponDB.gd"
 Interface="*res://interface.gd"
 CardDB="*res://cards/CardDB.gd"
+IngredientDB="*res://ingredients/IngredientDB.gd"
 
 [display]
 

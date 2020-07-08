@@ -3,10 +3,11 @@ extends Node2D
 signal mouse_entered()
 signal mouse_exited()
 
-var hpOffset = Vector2(-273, -175)
+var hpOffset = Vector2(0, -150)
 var shOffset = Vector2(0, 0)
 var attack
 var focused
+var defense = 0
 var dead = false
 var attack_ref = funcref(self, "_damage_received")
 var healing_ref = funcref(self, "_healing_received")
@@ -15,7 +16,7 @@ var use_type = {"attack" : attack_ref, "heal" : healing_ref}
 
 func _ready():
 #	$character/shadow.set_position(Vector2(0, $character/appearance.get_rect().end.y*$character/appearance.scale.y) + shOffset)
-	$character/shadow.scale = $character/appearance.scale*2.5
+#	$character/shadow.scale = $character/appearance.scale*2.5
 	#Game.connect("use", attack, character)
 	$mouse_area.connect("mouse_entered", self, "_on_mouse_area_entered")
 	$mouse_area.connect("mouse_exited", self, "_on_mouse_area_exited")

@@ -14,7 +14,7 @@ onready var healthbar = get_node("character/healthbar")
 var abilities = {}
 var _targets = { "attack" : Game.player, "heal" : self}
 
-signal _on_turn()
+#signal _on_turn()
 
 func _init():
 	pass
@@ -22,7 +22,7 @@ func _init():
 func _ready():
 	_is_ready = true
 	healthbar.connect("dead", self, "_on_dead")
-	healthbar.set_position(Vector2(0, $character/appearance.get_rect().position.y*$character/appearance.scale.y) + hpOffset)
+	healthbar.set_position(Vector2(healthbar.rect_position.x, $mouse_area.rect_position.y) + hpOffset * ($character/appearance.scale.y*1.5))
 #	_update_enemy()
 #
 #func _update_enemy():

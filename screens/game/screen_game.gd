@@ -9,15 +9,16 @@ var _player_characters = {
 
 var _enemies = load("res://character/enemy/current_enemy.gd").new()
 
-var weapon_ref = funcref(Game, "weapon_use")
-var item_ref = funcref(Game, "item_use")
-var jutsu_ref = funcref(Game, "jutsu_use")
-
-var hand_use = {"weapons" : weapon_ref, "items" : item_ref, "jutsus" : jutsu_ref}
+#var weapon_ref = funcref(Game, "weapon_use")
+#var item_ref = funcref(Game, "item_use")
+#var jutsu_ref = funcref(Game, "jutsu_use")
+#
+#var hand_use = {"weapons" : weapon_ref, "items" : item_ref, "jutsus" : jutsu_ref}
 
 var targets = []
 var enemy_targets = []
 var enemy_positions = []
+var enemy_position = Vector2(0,0)
 var possible_enemy_positions = []
 var end_turn = false
 
@@ -29,8 +30,8 @@ func _init():
 
 func _ready():
 	Game.moves = Game.max_moves
-	$TurnCon/TurnButton/Label.text = String(Game.moves)
 	Game.curr_bars = Game.bars.duplicate()
+	$TurnCon/TurnButton/Label.text = String(Game.moves)
 	$Inventory.connect("play", self, "_on_play")
 	
 	Game.connect("turn_started", self, "_on_turn_started")
@@ -40,6 +41,17 @@ func _ready():
 	ready_up()
 	
 	add_targets()
+	if !Game.once:
+		WeaponDB.pickup_weapon("wood sword")
+		WeaponDB.pickup_weapon("wood sword")
+		WeaponDB.pickup_weapon("wood sword")
+		ItemDB.pickup_item("potion")
+		ItemDB.pickup_item("potion")
+		ItemDB.pickup_item("kunai")
+		ItemDB.pickup_item("fish")
+		ItemDB.pickup_item("fish")
+		CardDB.pickup_card("two handse")
+		Game.once = true
 
 func _enter_tree():
 	pass
@@ -51,17 +63,18 @@ func _exit_tree():
 	_animation.stop_all()
 
 func ready_up():
-	possible_enemy_positions = [Vector2(0,0), Vector2(-700,0), Vector2(700,0)]
-	var positions = randi() % 3+1
-	for i in range(positions):
-#		$enemy_position.add_child(_enemy_characters.values()[randi() % _enemy_characters.size()].instance())
-		$enemy_position.add_child(_enemies.enemy_setup(EnemyDB.random_enemy()))
-	if positions == 1:
-		enemy_positions = [possible_enemy_positions[0]]
-	if positions == 2:
-		enemy_positions = [possible_enemy_positions[1]+Vector2(300,0),possible_enemy_positions[2]+Vector2(-300,0)]
-	if positions == 3:
-		enemy_positions = [possible_enemy_positions[1]+Vector2(-150,0),possible_enemy_positions[0]+Vector2(-150,0),possible_enemy_positions[2]+Vector2(-150,0)]
+	$enemy_position.add_child(_enemies.enemy_setup(EnemyDB.random_enemy()))
+#	possible_enemy_positions = [Vector2(0,0), Vector2(-700,0), Vector2(700,0)]
+#	var positions = randi() % 3+1
+#	for i in range(positions):
+##		$enemy_position.add_child(_enemy_characters.values()[randi() % _enemy_characters.size()].instance())
+#		$enemy_position.add_child(_enemies.enemy_setup(EnemyDB.random_enemy()))
+#	if positions == 1:
+#		enemy_positions = [possible_enemy_positions[0]]
+#	if positions == 2:
+#		enemy_positions = [possible_enemy_positions[1]+Vector2(300,0),possible_enemy_positions[2]+Vector2(-300,0)]
+#	if positions == 3:
+#		enemy_positions = [possible_enemy_positions[1]+Vector2(-150,0),possible_enemy_positions[0]+Vector2(-150,0),possible_enemy_positions[2]+Vector2(-150,0)]
 
 func add_targets():
 	$player_position.add_child(_player_characters[Game.character].instance())
@@ -71,7 +84,8 @@ func add_targets():
 		child.connect("mouse_entered", self, "_on_target_mouse_entered", [child])
 		child.connect("mouse_exited", self, "_on_target_mouse_exited", [child])
 	for child in $enemy_position.get_children():
-		child.position.x = enemy_positions[child.get_index()].x
+#		child.position.x = enemy_positions[child.get_index()].x
+		child.position.x = enemy_position.x
 		targets.append(child)
 		enemy_targets.append(child)
 		child.connect("mouse_entered", self, "_on_target_mouse_entered", [child])
@@ -99,8 +113,8 @@ func _update_draw_pile(new_size):
 func _update_discard_pile(new_size):
 	$btn_discard_pile/lbl_discard_pile_count.text = "%d" % new_size
 
-func _update_player_spirit():
-	$img_energy/lbl_energy.text = "%d/%d" % [Game.spirit, Game.spirit]
+func _update_player_focus():
+	$img_energy/lbl_energy.text = "%d/%d" % [Game.focus, Game.focus]
 
 func _toggle_in():
 	_animation.interpolate_property(
@@ -134,8 +148,7 @@ func _on_play(card, hand, bars = null):
 			Game.curr_bars[bar] -= bars[bar]
 	Game.emit_signal("player_check")
 	var target = _check_targets()
-	if hand in hand_use:
-		hand_use[hand].call_func(card, target)
+	Game.item_use(card, hand, target)
 	Game.moves -= 1
 	move_update()
 	$Inventory.played = false
@@ -144,8 +157,7 @@ func end_turn():
 	if $Inventory.played:
 		return
 	$Inventory.played = true
-	Game.curr_bars = Game.bars.duplicate()
-	Game.emit_signal("player_check")
+	Game.emit_signal("player_end")
 	Game._stepper.start()
 	_change_step_text("Turn Ended")
 	yield(Game._stepper,"timeout")

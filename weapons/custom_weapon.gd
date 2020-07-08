@@ -37,7 +37,7 @@ func _init():
 func _ready():	
 #	$mouse_area.connect("mouse_entered", self, "_on_mouse_area_entered")
 #	$mouse_area.connect("mouse_exited", self, "_on_mouse_area_exited")
-#	$mouse_area.connect("gui_input", self, "_on_mouse_area_event")
+	$mouse_area.connect("gui_input", self, "_on_mouse_area_event")
 	_animation.connect("tween_completed", self, "_on_animation_completed")
 
 func _process(delta):

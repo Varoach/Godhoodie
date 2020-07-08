@@ -13,6 +13,9 @@ var _focused_item
 signal play(item)
 
 onready var inventory = get_node("../../../..")
+var craftables
+var craft_ready = false
+var under_item = null
 var item_rotate = []
 var item_held = null
 var item_offset = Vector2()
@@ -23,14 +26,22 @@ var single_grid_scale = Vector2(0.435,0.435)
 var item_texture = null
 #var item_scale = Vector2(1.07,1.07)
 var item_scale = Vector2(1,1)
+var save_state = null
+
+signal stop_shake()
 
 func _ready():
+	connect("mouse_exited", self, "_on_mouse_exit")
 	ItemDB.connect("item_added", self, "_on_item_added")
 	inventory.connect("item_played", self, "_on_item_played")
 	var cell_sizey = {}
-	cell_sizey.x = rect_size.x/16
-	cell_sizey.y = rect_size.y/9
+	cell_sizey.x = $grid.rect_size.x/16
+	cell_sizey.y = $grid.rect_size.y/9
 	cell_size = cell_sizey.values().min()
+#	cell_size = 0
+#	for thing in cell_sizey.values():
+#		cell_size += thing
+#	cell_size /= cell_sizey.size()
 	ItemDB.cell_size = cell_size
 	var s = get_grid_size(self)
 	grid_width = s.x
@@ -45,7 +56,7 @@ func _ready():
 				grid[x][y]["available"] = true
 				grid[x][y]["infected"] = false
 				new_grid(x, y)
-			elif (x == 11 or x == 12) and y < 6:
+			elif (x == 11 or x == 12 or x == 13 or x == 14 or x == 15 or x == 16) and y < 6:
 				grid[x][y]["carrying"] = false
 				grid[x][y]["available"] = true
 				grid[x][y]["infected"] = false
@@ -54,36 +65,82 @@ func _ready():
 				grid[x][y]["carrying"] = false
 				grid[x][y]["available"] = false
 				grid[x][y]["infected"] = false
-	ItemDB.pickup_item("potion")
-	ItemDB.pickup_item("potion")
-	ItemDB.pickup_item("kunai")
-	ItemDB.pickup_item("fish")
+	set_items()
+	save_locations()
+
+func _on_mouse_exit():
+	Game.player.animation("default")
 
 func _process(delta):
 	var cursor_pos = get_global_mouse_position()
 	if Input.is_action_just_pressed("grab") and get_global_rect().has_point(cursor_pos):
 		grab(cursor_pos)
-	if Input.is_action_just_released("grab"):
+	if Input.is_action_just_released("grab") and craftables == null:
 		release(cursor_pos)
+		save_locations()
+	elif Input.is_action_just_released("grab") and craftables != null:
+		craft(under_item, item_held, IngredientDB.craft(under_item.title, item_held.title))
+		save_locations()
 	if Input.is_action_just_pressed("turn_left"):
 		rotate("left")
 	if Input.is_action_just_pressed("turn_right"):
 		rotate("right")
+	if get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) == null and item_held == null and !inventory.hand:
+		Game.player.animation("rummage")
+	elif  get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) != null and item_held == null and !inventory.hand:
+		Game.player.animation("searching")
 	if item_held != null:
-		item_held.global_position = cursor_pos - item_held.get_size() / 2
-		can_insert(item_held)
-		if distance_check():
+		under_item = above_item()
+		if under_item != null:
+			if IngredientDB.can_craft(under_item.title, item_held.title) and !craft_ready:
+				craft_ready = true
+				under_item.emit_signal("shake")
+				Game.player.animation("craft")
+		if distance_check() and !craft_ready:
 			show_position()
+			Game.player.animation("ready")
 		else:
 			turn_off_texture()
+		item_held.global_position = cursor_pos - item_held.get_size() / 2
+		can_insert(item_held)
 	if item_held == null and item_texture != null:
 		turn_off_texture()
+	if item_held == null or under_item == null:
+		craftables = null
+		craft_ready = false
+
+func save_locations():
+	Inventory.item_locations = {}
+	for item in $items.get_children():
+		var num = 1
+		var title = item.title
+		title = item.title + String(num)
+		while Inventory.item_locations.has(title):
+			num += 1
+			title = item.title + String(num)
+		Inventory.item_locations[title] = {}
+		Inventory.item_locations[title].g_pos = pos_to_grid_coord(item.global_position + Vector2(cell_size / 2, cell_size / 2))
+		Inventory.item_locations[title].item_size = get_grid_size(item)
+		Inventory.item_locations[title].item_state = item.save_item_state()
+
+func _on_under_item_shake_done():
+	if item_held == null or under_item == null:
+		return
+	craftables = [under_item.title,item_held.title]
+	print(craftables)
+
+func above_item():
+	var under_item = get_item_under_pos(item_held.global_position + (item_held.get_size()/2))
+	if under_item != null:
+		return under_item
+	return null
 
 func turn_off_texture():
-	if item_texture != null:
-		item_texture.queue_free()
-		item_texture = null
-		last_available_pos.clear()
+	if item_texture == null:
+		return
+	item_texture.queue_free()
+	item_texture = null
+	last_available_pos.clear()
 
 func show_position():
 	if last_available_pos.empty():
@@ -91,12 +148,12 @@ func show_position():
 	if item_texture == null:
 		reset_item_texture()
 		$items.add_child(item_texture)
-	item_texture.position = Vector2(last_available_pos.g_pos.x*cell_size,last_available_pos.g_pos.y*cell_size)
+	item_texture.position = Vector2(last_available_pos.g_pos.x*cell_size,last_available_pos.g_pos.y*cell_size) - Vector2(1,0)# + Vector2(3,10)
 
 func new_grid(x, y):
 	var local_pos = Vector2(x * cell_size, y * cell_size)
 	var new_child = single_grid.instance()
-	new_child.rect_size = Vector2(cell_size, cell_size)
+	new_child.rect_size = Vector2(cell_size+1, cell_size+1)
 	new_child.rect_position = local_pos - Vector2(2,0)
 	$grid.add_child(new_child)
 
@@ -106,8 +163,7 @@ func insert_item(item):
 	var item_size = get_grid_size(item)
 	if is_grid_space_available(g_pos.x, g_pos.y, item_size.x, item_size.y):
 		set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
-		item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-		Game.add_item(item)
+		item.global_position = rect_global_position-Vector2() + Vector2(g_pos.x, g_pos.y) * cell_size - Vector2(1,0)# + Vector2(3,10)
 		return true
 	else:
 		return false
@@ -130,8 +186,6 @@ func can_insert(item):
 func find_fit(x, y, w, h):
 	var results = {"x" : x, "y": y, "w" : w, "h": h}
 	var under_item = get_item_under_pos(item_held.global_position + (item_held.get_size()/2))
-#	if under_item == null:
-#		return result
 	var tempx = x
 	var tempy = y
 	var tempx2 = x
@@ -198,11 +252,13 @@ func is_grid_space_available(x, y, w, h):
 	return true
 
 func drop_item():
+	Inventory.remove_item(item_held.title)
 	item_held.queue_free()
 	item_held = null
 
 func return_item():
-	item_held.return_item_state()
+	item_held.return_item_state(save_state)
+	save_state = null
 	last_container.insert_item(item_held)
 	item_held.reset_z_index()
 	item_held = null
@@ -222,7 +278,8 @@ func pos_to_grid_coord(pos):
 	return results
 
 func get_item_under_pos(pos):
-	for item in Game.player_inventory.items:
+	for item in $items.get_children():
+		if item == item_held: continue
 		if item.get_global_rect().has_point(pos):
 			return item
 	return null
@@ -233,10 +290,11 @@ func grab(cursor_pos):
 		item_held = c.grab_item(cursor_pos)
 		if item_held != null:
 			last_container = c
-			item_held.save_item_state()
+			save_state = item_held.save_item_state()
 			item_offset = item_held.global_position - cursor_pos
 			$items.move_child(item_held, get_child_count())
 			item_held.bring_front()
+			Game.player.animation("ready")
 
 func rotate(rotation):
 	if item_held == null:
@@ -273,8 +331,6 @@ func grab_item(pos):
 	var g_pos = pos_to_grid_coord(item_pos)
 	var item_size = get_grid_size(item)
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
-	
-	Game.remove_item(item)
 	return item
 
 func release(cursor_pos):
@@ -286,7 +342,9 @@ func release(cursor_pos):
 			emit_signal("play", item_held, item_held.targets, name, item_held.bars)
 		else:
 			return_item()
+			Game.player.animation("default")
 	elif c.has_method("insert_item"):
+		Game.player.animation("default")
 		if c.insert_item(item_held):
 			item_held.reset_z_index()
 			item_held = null
@@ -297,7 +355,22 @@ func release(cursor_pos):
 		else:
 			return_item()
 	else:
+		Game.player.animation("default")
 		return_item()
+
+func craft(lower, higher, result):
+	if result == null:
+		return
+	var lower_pos = lower.global_position + Vector2(cell_size / 2, cell_size / 2)
+	var g_pos = pos_to_grid_coord(lower_pos)
+	var item_size = get_grid_size(lower)
+	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
+	Inventory.remove_item(lower.title)
+	lower.queue_free()
+	drop_item()
+	Inventory.add_item(result.title)
+	set_item(result)
+	Game.player.animation("default")
 
 func get_container_under_cursor(cursor_pos):
 	var containers = [self]
@@ -311,7 +384,6 @@ func insert_item_at_last_available_spot(item, spot):
 	var item_size = spot.item_size
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
 	item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-	Game.add_item(item)
 	last_available_pos.clear()
 
 func insert_item_at_first_available_spot(item):
@@ -324,16 +396,33 @@ func insert_item_at_first_available_spot(item):
 	return false
 
 func _on_item_added(item):
-	set_items(item)
+	set_item(item)
+	item.connect("shake_done", self, "_on_under_item_shake_done")
 
-func set_items(item):
+func set_item(item):
 	$items.add_child(item)
 	item.set_size(item.size * cell_size)
 	item.set_scale(rect_scale * item_scale)
+#	if !Inventory.item_locations.empty():
+#		var num = 0
+#		var title = item.title + String(num)
+#		for child in $items.get_children():
+#			if item.title == child.title:
+#				num += 1
+#				title = item.title + String(num)
+#		item.return_item_state(Inventory.item_locations[title].item_state)
+#		insert_item_at_last_available_spot(item, Inventory.item_locations[title])
 	if !insert_item_at_first_available_spot(item):
-		item.queue_free()
-		return false
+			item.queue_free()
+			return false
 	return true
+
+func set_items():
+	for child in $items.get_children():
+		remove_child(child)
+
+	for item_id in Inventory.player_inventory.items:
+		set_item(ItemDB.item_setup(item_id))
 
 func spot_check(x,y):
 	if !grid[x][y]["carrying"] and grid[x][y]["available"] and !grid[x][y]["infected"]:
@@ -346,8 +435,10 @@ func _on_item_played(item, status):
 	elif not status and distance_check():
 		insert_item_at_last_available_spot(item_held, last_available_pos)
 		item_held = null
+		Game.player.animation("default")
 	else:
 		return_item()
+		Game.player.animation("default")
 
 func distance_check():
 	if item_held == null or last_available_pos.empty():

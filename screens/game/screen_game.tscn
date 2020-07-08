@@ -1,24 +1,14 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://screens/game/screen_game.gd" type="Script" id=1]
-[ext_resource path="res://screens/game/background.png" type="Texture" id=2]
+[ext_resource path="res://screens/game/Untitled_Artwork22.png" type="Texture" id=2]
 [ext_resource path="res://widgets/icon_button/widget_icon_button.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Rajdhani-Bold.ttf" type="DynamicFontData" id=8]
-[ext_resource path="res://screens/game/energy_bg.png" type="Texture" id=12]
 [ext_resource path="res://Inventory/inventory.tscn" type="PackedScene" id=13]
 [ext_resource path="res://screens/game/UI/player_ui.tscn" type="PackedScene" id=14]
 [ext_resource path="res://screens/game/UI/TurnButton.tscn" type="PackedScene" id=15]
 
 [sub_resource type="DynamicFont" id=1]
-size = 30
-use_filter = true
-font_data = ExtResource( 8 )
-
-[sub_resource type="DynamicFont" id=2]
-size = 50
-use_filter = true
-
-[sub_resource type="DynamicFont" id=3]
 size = 80
 use_filter = true
 font_data = ExtResource( 8 )
@@ -41,9 +31,9 @@ __meta__ = {
 anchor_top = 0.5
 anchor_bottom = 0.5
 margin_left = 900.0
-margin_top = 120.0
+margin_top = 150.0
 margin_right = 940.0
-margin_bottom = 160.0
+margin_bottom = 190.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -55,9 +45,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 margin_left = -940.0
-margin_top = 120.0
+margin_top = 150.0
 margin_right = -900.0
-margin_bottom = 160.0
+margin_bottom = 190.0
 mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
@@ -77,147 +67,12 @@ texture_click_mask = null
 margin_left = -12.0
 margin_right = 20.0
 
-[node name="btn_deck" parent="." instance=ExtResource( 5 )]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -148.0
-margin_top = 10.0
-margin_right = -84.0
-margin_bottom = 74.0
-hint_tooltip = "Deck"
-texture_click_mask = null
-
-[node name="lbl_deck_count" type="Label" parent="btn_deck"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = -25.0
-margin_top = -25.0
-margin_right = 19.0
-margin_bottom = 6.0
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "0"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="btn_draw_pile" parent="." instance=ExtResource( 5 )]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = -74.0
-margin_right = 74.0
-margin_bottom = -10.0
-hint_tooltip = "Draw pile"
-texture_click_mask = null
-
-[node name="lbl_draw_pile_count" type="Label" parent="btn_draw_pile"]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -16.0
-margin_top = -25.0
-margin_right = 24.0
-margin_bottom = 6.0
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0.445049, 0.84375, 0.197754, 1 )
-custom_colors/font_color_shadow = Color( 1, 1, 1, 1 )
-custom_constants/shadow_as_outline = 1
-text = "0"
-align = 1
-valign = 1
-
-[node name="draw_point" type="Position2D" parent="btn_draw_pile"]
-position = Vector2( 32.5076, 33.171 )
-
-[node name="btn_discard_pile" parent="." instance=ExtResource( 5 )]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -74.0
-margin_top = -74.0
-margin_right = -10.0
-margin_bottom = -10.0
-hint_tooltip = "Discard pile"
-texture_click_mask = null
-
-[node name="lbl_discard_pile_count" type="Label" parent="btn_discard_pile"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = -25.0
-margin_top = -25.0
-margin_right = 19.0
-margin_bottom = 6.0
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color = Color( 0.800781, 0.215836, 0.215836, 1 )
-custom_colors/font_color_shadow = Color( 1, 1, 1, 1 )
-custom_constants/shadow_as_outline = 1
-text = "0"
-align = 1
-valign = 1
-
-[node name="discard_point" type="Position2D" parent="btn_discard_pile"]
-position = Vector2( 33.171, 32.5076 )
-
-[node name="btn_end_turn" parent="." instance=ExtResource( 5 )]
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -74.0
-margin_top = -220.0
-margin_right = -10.0
-margin_bottom = -156.0
-hint_tooltip = "Next turn"
-texture_click_mask = null
-
-[node name="icon" parent="btn_end_turn" index="0"]
-margin_left = -12.0
-margin_right = 20.0
-
-[node name="img_energy" type="TextureRect" parent="."]
-visible = false
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = -220.0
-margin_right = 74.0
-margin_bottom = -156.0
-texture = ExtResource( 12 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="lbl_energy" type="Label" parent="img_energy"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -32.0
-margin_top = -14.0
-margin_right = 34.0
-margin_bottom = 30.0
-hint_tooltip = "Energy"
-custom_fonts/font = SubResource( 2 )
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_as_outline = 1
-text = "0/0"
-align = 1
-valign = 1
-
 [node name="lbl_step" type="Label" parent="."]
 margin_left = 60.0
 margin_top = 273.0
 margin_right = 3780.0
 margin_bottom = 452.0
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 1 )
 text = "EMPTY"
 align = 1
 valign = 1
@@ -237,10 +92,10 @@ __meta__ = {
 [node name="playerui" parent="." instance=ExtResource( 14 )]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -1860.0
-margin_top = 58.0
-margin_right = -738.0
-margin_bottom = 216.0
+margin_left = -1910.0
+margin_top = 10.0
+margin_right = -788.0
+margin_bottom = 168.0
 mouse_filter = 2
 
 [node name="Inventory" parent="." instance=ExtResource( 13 )]
@@ -256,12 +111,7 @@ __meta__ = {
 [node name="TurnButton" parent="TurnCon" instance=ExtResource( 15 )]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-[connection signal="inventory_ready" from="." to="Inventory" method="_on_inventory_ready"]
 [connection signal="pressed" from="btn_exit" to="." method="_on_btn_exit_pressed"]
-[connection signal="pressed" from="btn_draw_pile" to="." method="_on_btn_draw_pile_pressed"]
-[connection signal="pressed" from="btn_discard_pile" to="." method="_on_btn_discard_pile_pressed"]
 [connection signal="pressed" from="TurnCon/TurnButton" to="." method="end_turn"]
 
 [editable path="btn_exit"]
-
-[editable path="btn_end_turn"]

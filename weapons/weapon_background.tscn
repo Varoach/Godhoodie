@@ -1,13 +1,14 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Assets/Fonts/togalite/togalite-black.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://weapons/weapon_template.gd" type="Script" id=2]
+[ext_resource path="res://weapons/common_back.png" type="Texture" id=3]
 [ext_resource path="res://weapons/template_back.png" type="Texture" id=4]
 [ext_resource path="res://weapons/weapon_background.tres" type="Material" id=5]
 [ext_resource path="res://weapons/common.png" type="Texture" id=6]
 
 [sub_resource type="DynamicFont" id=1]
-size = 50
+size = 75
 outline_size = 4
 outline_color = Color( 0.129412, 0.129412, 0.129412, 1 )
 use_mipmaps = true
@@ -15,7 +16,8 @@ use_filter = true
 font_data = ExtResource( 1 )
 
 [sub_resource type="Animation" id=2]
-length = 0.2
+length = 0.13
+step = 0.013
 tracks/0/type = "value"
 tracks/0/path = NodePath("background:texture")
 tracks/0/interp = 1
@@ -23,10 +25,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1.6245 ),
 "update": 1,
-"values": [ ExtResource( 6 ), ExtResource( 4 ) ]
+"values": [ ExtResource( 6 ), ExtResource( 3 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("background:rect_scale")
@@ -35,7 +37,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
+"times": PoolRealArray( 0, 0.065, 0.13 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 1, 1e-05 ), Vector2( 1, 1 ) ]
@@ -47,7 +49,7 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = false
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
@@ -59,7 +61,7 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
@@ -71,7 +73,7 @@ tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
@@ -83,14 +85,15 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = false
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ null, ExtResource( 5 ) ]
 }
 
 [sub_resource type="Animation" id=3]
-length = 0.2
+length = 0.13
+step = 0.013
 tracks/0/type = "value"
 tracks/0/path = NodePath("background:texture")
 tracks/0/interp = 1
@@ -98,7 +101,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1.6245, 1 ),
 "update": 1,
 "values": [ ExtResource( 4 ), ExtResource( 6 ) ]
@@ -110,7 +113,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2 ),
+"times": PoolRealArray( 0, 0.065, 0.13 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 1, 1e-05 ), Vector2( 1, 1 ) ]
@@ -122,7 +125,7 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = false
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
@@ -134,7 +137,7 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
@@ -146,7 +149,7 @@ tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0, 0.1 ),
+"times": PoolRealArray( 0, 0.065 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
@@ -158,10 +161,10 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = false
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 5 ), null ]
+"values": [ ExtResource( 5 ) ]
 }
 
 [node name="template" type="Node2D"]
@@ -172,7 +175,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -298.0
 margin_bottom = -56.0
-rect_min_size = Vector2( 1150, 217 )
+rect_min_size = Vector2( 1135, 210 )
 rect_pivot_offset = Vector2( 486, 95 )
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -183,40 +186,42 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="title" type="Label" parent="background"]
-visible = false
-margin_left = 2.39001
-margin_top = 5.0
-margin_right = 306.39
-margin_bottom = 57.0
-custom_fonts/font = SubResource( 1 )
-text = "Sample"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="title_back" type="Label" parent="background"]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_right = 0.981
+anchor_bottom = 1.057
+margin_top = -12.0
+margin_right = 0.564941
+margin_bottom = 0.0299988
 custom_fonts/font = SubResource( 1 )
 text = "
 BACK
 "
 align = 1
-valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="weapon_hold" type="Control" parent="background"]
 margin_left = 755.036
-margin_top = 107.941
+margin_top = 105.0
 margin_right = 795.036
-margin_bottom = 147.941
+margin_bottom = 145.0
 mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="title" type="Label" parent="background"]
+visible = false
+margin_left = 582.39
+margin_top = 26.0
+margin_right = 886.39
+margin_bottom = 78.0
+custom_fonts/font = SubResource( 1 )
+text = "Sample"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }

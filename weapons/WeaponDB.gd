@@ -10,7 +10,7 @@ const WEAPON_PATH = "res://weapons/"
 const WEAPONS = {
 		"wood sword": {
 		"icon": WEAPON_PATH + "wood.png",
-		"targets": "single",
+		"targets": "first",
 		"rarity": "common",
 		"values":{
 			"attack" : 4
@@ -24,27 +24,27 @@ const WEAPONS = {
 const BACKGROUNDS = {
 	"basic": {
 		"icon": WEAPON_PATH + "template.png",
-		"icon_back": WEAPON_PATH + "template_back.png"
+		"icon_back": WEAPON_PATH + "common_back.png"
 	},
 	"common": {
 		"icon": WEAPON_PATH + "common.png",
-		"icon_back": WEAPON_PATH + "template_back.png"
+		"icon_back": WEAPON_PATH + "common_back.png"
 	},
 	"epic": {
 		"icon": WEAPON_PATH + "epic.png",
-		"icon_back": WEAPON_PATH + "template_back.png"
+		"icon_back": WEAPON_PATH + "common_back.png"
 	},
 	"legendary": {
 		"icon": WEAPON_PATH + "legendary.png",
-		"icon_back": WEAPON_PATH + "template_back.png"
+		"icon_back": WEAPON_PATH + "common_back.png"
 	},
 }
 
 func pickup_weapon(weapon_id):
-	if Game.player_inventory.weapons.size() == 3:
+	if Inventory.player_inventory.weapons.size() == 3:
 		return
 	var weapon = whole_setup(weapon_id)
-	Game.add_weapon(weapon)
+	Inventory.add_weapon(weapon_id)
 	emit_signal("weapon_added")
 
 func get_weapon(weapon_id):

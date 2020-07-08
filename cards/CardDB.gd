@@ -21,7 +21,7 @@ const CARDS = {
 		"attack": 1
 	  },
 	  "bars":{
-		"spirit": 2
+		"focus": 2
 	  },
 	  "texts": {
 		"name": "The Sword 1",
@@ -29,7 +29,7 @@ const CARDS = {
 		"desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto [color=#2c68a0]$targets[/color][/center]"
 	  }
 	},
-	"two_hands": {
+	"two hands": {
 	  "category": "fighter",
 	  "type": "attack",
 	  "tags": [],
@@ -44,7 +44,7 @@ const CARDS = {
 		"vulnerable": 1
 	  },
 	  "bars":{
-		"spirit": 2
+		"focus": 2
 	  },
 	  "texts": {
 		"name": "Two Hands Wack 4",
@@ -66,7 +66,7 @@ const CARDS = {
 		"attack": 2
 	  },
 	  "bars":{
-		"spirit": 1
+		"focus": 1
 	  },
 	  "texts": {
 		"name": "The Sword 2",
@@ -74,7 +74,7 @@ const CARDS = {
 		"desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto [color=#2c68a0]$targets[/color][/center]"
 	  }
 	},
-	"two_handse": {
+	"two handse": {
 	  "category": "fighter",
 	  "type": "attack",
 	  "tags": [],
@@ -89,7 +89,7 @@ const CARDS = {
 		"vulnerable": 1
 	  },
 	  "bars":{
-		"spirit": 2
+		"focus": 2
 	  },
 	  "texts": {
 		"name": "Two Hands Wack 3",
@@ -99,20 +99,20 @@ const CARDS = {
 	}
 }
 
-func pickup_card(card_id):
-	if Game.player_inventory.cards.size() == 8:
-		return
-	var card = card_setup(card_id)
-	card._update_card()
-	Game.add_card(card)
-	emit_signal("card_added")
-
 const CARD_BACKS = {
 	"consumables": {
 		"icon": CARD_PATH + "card-background-consumables.png",
 		"icon_back": CARD_PATH + "card-back-consumables.png"
 	}
 }
+
+func pickup_card(card_id):
+	if Inventory.player_inventory.cards.size() == 8:
+		return
+	var card = card_setup(card_id)
+	card._update_card()
+	Inventory.add_card(card_id)
+	emit_signal("card_added")
 
 func get_card(card_id):
 	if card_id in CARDS:
@@ -129,6 +129,7 @@ func get_back(back_id):
 func card_setup(card_id):
 	var card = custom_card.instance()
 	card.set_meta("id", card_id)
+	card.title = card_id
 	card.targets = get_card(card_id)["targets"]
 	card.bars = get_card(card_id)["bars"]
 	card.texts = get_card(card_id)["texts"]

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://screens/game/Bars/focus_bar.gd" type="Script" id=1]
+[ext_resource path="res://screens/game/UI/focus2.png" type="Texture" id=2]
+
+[node name="bar" type="TextureRect"]
+margin_right = 75.0
+margin_bottom = 70.0
+rect_min_size = Vector2( 75, 70 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 1
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

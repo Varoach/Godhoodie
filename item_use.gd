@@ -4,11 +4,11 @@ var item_single_ref = funcref(self, "apply_item")
 var item_enemies_ref = funcref(self, "enemies_item")
 var item_everyone_ref = funcref(self, "everyone_item")
 var item_random_ref = funcref(self, "random_item")
+var item_first_ref = funcref(self, "first_item")
 
-var jutsu_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
-var item_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
-var weapon_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
-
+#var jutsu_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
+var item_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref}
+#var weapon_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
 
 func get_item_use(case, use):
 	if use in case:
@@ -37,6 +37,9 @@ func random_item(item, target = null):
 			random_hit_item(item)
 	else:
 		random_hit_item(item)
+
+func first_item(item, target = null):
+	apply_item(item, Game.enemy_targets[0])
 
 func random_hit_item(item):
 	var target_type = item.target_type

@@ -6,6 +6,7 @@ const FORMAT_IMAGE = "img_%s"
 var default_z = 0 setget set_default_z
 
 var targets = ""
+var title = ""
 var values = {}
 var bars = {}
 var size = Vector2()
@@ -13,7 +14,7 @@ var texture_original
 var texture_rotate
 var rotated = false
 var flipped = false
-var item_state = {}
+var ready = false
 
 var _animation = Tween.new()
 var _animation_stack = []
@@ -30,6 +31,8 @@ signal left_pressed()#button)
 signal left_released()#button)
 signal right_pressed()
 signal right_released()
+signal shake()
+signal shake_done()
 
 class AnimationState extends Reference:
 	var pos = Vector2(0.0, 0.0)
@@ -42,7 +45,8 @@ export(float) var animation_speed = 0.6
 func _init():
 	add_child(_animation)
 
-func _ready():	
+func _ready():
+	connect("shake", self, "_on_shake")
 	$Image.connect("mouse_entered", self, "_on_mouse_area_entered")
 	$Image.connect("mouse_exited", self, "_on_mouse_area_exited")
 	$Image.connect("gui_input", self, "_on_mouse_area_event")
@@ -54,6 +58,9 @@ func _process(delta):
 
 func _exit_tree():
 	_animation.stop_all()
+
+func _on_shake():
+	$animations.play("shake")
 
 # Adds an animation state from the current values
 func push_animation_state_from_current():
@@ -255,6 +262,7 @@ func rotate_left():
 		flipped = true
 
 func save_item_state():
+	var item_state = {}
 	item_state.texture = $Image.texture
 	item_state.rect_size = $Image.rect_size
 	item_state.position = global_position
@@ -262,16 +270,16 @@ func save_item_state():
 	item_state.flipped = flipped
 	item_state.flip_v = $Image.flip_v
 	item_state.flip_h = $Image.flip_h
+	return item_state
 
-func return_item_state():
-	$Image.texture = item_state.texture
-	$Image.rect_size = item_state.rect_size
-	global_position = item_state.position
-	$Image.flip_v = item_state.flip_v
-	$Image.flip_h = item_state.flip_h
-	rotated = item_state.rotated
-	flipped = item_state.flipped
-	item_state.clear()
+func return_item_state(state):
+	$Image.texture = state.texture
+	$Image.rect_size = state.rect_size
+	global_position = state.position
+	$Image.flip_v = state.flip_v
+	$Image.flip_h = state.flip_h
+	rotated = state.rotated
+	flipped = state.flipped
 
 func flip_me():
 	var temp = $Image.rect_size.x
@@ -295,3 +303,9 @@ func get_size():
 
 func get_global_rect():
 	return $Image.get_global_rect()
+
+func _on_stop_shake():
+	$animations.stop(true)
+
+func _on_animation_finished(shake):
+	emit_signal("shake_done")
