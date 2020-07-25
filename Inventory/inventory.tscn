@@ -62,7 +62,7 @@ size_flags_vertical = 3
 
 [node name="items" parent="background/horizontal_container/items_container" instance=ExtResource( 3 )]
 margin_top = 9.0
-margin_bottom = 13.0
+margin_bottom = 4.00006
 
 [node name="jutsus_container" type="Control" parent="background/horizontal_container"]
 margin_left = 2463.0

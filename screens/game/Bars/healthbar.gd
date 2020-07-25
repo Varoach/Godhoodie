@@ -2,9 +2,6 @@ extends TextureProgress
 
 signal dead
 
-func _process(delta):
-	pass
-
 func check_health():
 	if value <= 0:
 		emit_signal("dead")

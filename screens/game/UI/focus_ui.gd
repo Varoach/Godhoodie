@@ -11,7 +11,7 @@ func _ready():
 	focus_set()
 
 func focus_create():
-	for i in range(Game.bars.focus):
+	for _i in range(Game.bars.focus):
 		var focusb = custom_bar.instance()
 		focusb.texture_off = load(FOCUS_PATH + "1.png")
 		focusb.texture_on = load(FOCUS_PATH + "2.png")

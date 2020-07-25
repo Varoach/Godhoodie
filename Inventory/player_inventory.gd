@@ -1,11 +1,9 @@
 extends Control
 
 var played = false
-var hand = false
+var hand_play = false
 
 signal play(item, hand)
-signal highlight(card)
-signal unhighlight(card)
 signal weapon_played(item, status)
 signal item_played(item, status)
 signal jutsu_played(item, status)
@@ -13,6 +11,7 @@ signal jutsu_played(item, status)
 var highlight = false
 
 func _ready():
+	Game.inventory = self
 	$background/horizontal_container/weapons_container/weapons.connect("play" ,self ,"_on_play")
 	$background/horizontal_container/items_container/items.connect("play" ,self ,"_on_play")
 	$background/horizontal_container/jutsus_container/jutsus.connect("play" ,self ,"_on_play")

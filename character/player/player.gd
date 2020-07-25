@@ -4,9 +4,14 @@ signal check()
 
 onready var ui = get_node("../../playerui")
 onready var animator = $character/appearance
+var curr_pos = null
 
 func _ready():
+	animation_speed = 0.01
 	in_game()
+	save_animation_state_global()
+	curr_pos = global_position
+#	$animations.connect("animation_finished", self, "_on_animation_finish")
 
 func in_game():
 	Game.connect("player_check", self, "player_update")
@@ -36,14 +41,14 @@ func _damage_received(value):
 		defense = 0
 	$character/defense.text = String(defense)
 	if value <= 0:
-		$animations.play("defend")
+#		$animations.play("defend")
 		return
-	$animations.play("damage")
+#	$animations.play("damage")
 	negative_health_update(value)
 	heart_check()
 
 func _healing_received(value):
-	$animations.play("defend")
+#	$animations.play("defend")
 	positive_health_update(value)
 	heart_check()
 
@@ -76,4 +81,22 @@ func negative_health_update(value):
 #	ui.focuses.reset()
 
 func animation(value):
+	if "use" in $character/appearance.animation:
+		yield($character/appearance, "animation_finished")
+		$character/appearance.animation = value
+	else:
+		$character/appearance.animation = value
+
+func animation_instant(value):
 	$character/appearance.animation = value
+
+func _on_appearance_animation_finished():
+	if "use" in $character/appearance.animation:
+		$character/appearance.animation = "default"
+		if curr_pos != null:
+			pop_animation_state_global()
+#			global_position = curr_pos
+
+func attack_position(pos):
+	push_animation_state_global(Vector2(pos.x, global_position.y), global_rotation_degrees, global_scale)
+#	global_position.x = pos.x

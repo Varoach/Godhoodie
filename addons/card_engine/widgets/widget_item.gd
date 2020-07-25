@@ -7,6 +7,12 @@ var default_z = 0 setget set_default_z
 
 var targets = ""
 var title = ""
+var anim_ready = ""
+var anim_use = ""
+var tags = []
+var real_title = ""
+var desc = ""
+var ability = null
 var values = {}
 var bars = {}
 var size = Vector2()
@@ -15,6 +21,8 @@ var texture_rotate
 var rotated = false
 var flipped = false
 var ready = false
+var buffs = {}
+onready var image = get_node("Image")
 
 var _animation = Tween.new()
 var _animation_stack = []
@@ -141,7 +149,10 @@ func _on_animation_completed(object, key):
 
 # Makes the card appear in front of others Node2D
 func bring_front():
-	z_index = VisualServer.CANVAS_ITEM_Z_MAX
+	z_index = 2
+
+func bring_super_front():
+	z_index = 1
 
 # Makes the card appear behind of others Node2D
 func send_back():

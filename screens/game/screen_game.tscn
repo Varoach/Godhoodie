@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://screens/game/screen_game.gd" type="Script" id=1]
-[ext_resource path="res://screens/game/Untitled_Artwork22.png" type="Texture" id=2]
+[ext_resource path="res://screens/game/background.png" type="Texture" id=2]
 [ext_resource path="res://widgets/icon_button/widget_icon_button.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Rajdhani-Bold.ttf" type="DynamicFontData" id=8]
 [ext_resource path="res://Inventory/inventory.tscn" type="PackedScene" id=13]
@@ -111,6 +111,8 @@ __meta__ = {
 [node name="TurnButton" parent="TurnCon" instance=ExtResource( 15 )]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="music" type="AudioStreamPlayer" parent="."]
 [connection signal="pressed" from="btn_exit" to="." method="_on_btn_exit_pressed"]
 [connection signal="pressed" from="TurnCon/TurnButton" to="." method="end_turn"]
 

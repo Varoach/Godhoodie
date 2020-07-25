@@ -27,8 +27,6 @@ func _ready():
 	CardDB.connect("card_added", self, "_on_card_added")
 	connect("resized", self, "_on_resized")
 	inventory.connect("jutsu_played", self, "_on_card_played")
-#	CardDB.pickup_card("two_handse")
-#	CardDB.pickup_card("two_handse")
 	_update_grid()
 
 func _process(delta):
@@ -39,7 +37,6 @@ func _on_card_added():
 	_update_grid()
 
 func _update_grid():
-	print(Inventory.player_inventory)
 	for child in get_children():
 		remove_child(child)
 
@@ -50,7 +47,9 @@ func _update_grid():
 
 func set_card(card):
 	card._update_card()
+	add_child(card)
 	if !card.ready:
+		yield(get_tree().create_timer(0.3),"timeout")
 		card.connect("mouse_entered", self, "_on_card_mouse_entered", [card])
 		card.connect("mouse_exited", self, "_on_card_mouse_exited", [card])
 		card.connect("left_pressed", self, "_on_card_left_pressed", [card])
@@ -59,8 +58,6 @@ func set_card(card):
 		card.connect("right_released", self, "_on_card_right_released", [card])
 		card.connect("mouse_motion", self, "_on_mouse_motion", [card])
 		card.ready = true
-	
-	add_child(card)
 
 func _on_resized():
 	yield(get_tree(), "idle_frame")
@@ -115,18 +112,18 @@ func _on_card_mouse_exited(card):
 
 func _on_card_left_pressed(card):
 	if _focused_card != card: return
-	if _focused_card.highlight:
-		unset_highlight_card(card)
-	else:
-		_focused_card.drag = true
-		inventory.hand = true
-		Game.player.animation("ready")
+#	if _focused_card.highlight:
+#		unset_highlight_card(card)
+#	else:
+	_focused_card.drag = true
+	inventory.hand_play = true
+	Game.player.animation(_focused_card.anim_ready)
 
 func _on_card_left_released(card):
 	if _focused_card != card: return
 	if _focused_card.highlight: return
 	if _focused_card.drag:
-		inventory.hand = false
+		inventory.hand_play = false
 		play(card)
 
 func _on_card_right_pressed(card):
@@ -170,7 +167,7 @@ func _on_card_played(card, status):
 	else:
 		unset_focused_card(card)
 		_on_resized()
-		Game.player.animation("default")
+		Game.player.animation(card.anim_use)
 
 func _apply_discard_transform(widget):
 	if not use_point.is_empty():

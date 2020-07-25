@@ -20,7 +20,6 @@ var enemy_targets = []
 var enemy_positions = []
 var enemy_position = Vector2(0,0)
 var possible_enemy_positions = []
-var end_turn = false
 
 var _focused_target = null
 
@@ -42,15 +41,18 @@ func _ready():
 	
 	add_targets()
 	if !Game.once:
-		WeaponDB.pickup_weapon("wood sword")
-		WeaponDB.pickup_weapon("wood sword")
+		WeaponDB.pickup_weapon("daggers")
 		WeaponDB.pickup_weapon("wood sword")
 		ItemDB.pickup_item("potion")
 		ItemDB.pickup_item("potion")
+		ItemDB.pickup_item("fools gold")
+		ItemDB.pickup_item("electric rune")
+		ItemDB.pickup_item("electric rune")
+		ItemDB.pickup_item("electric rune")
 		ItemDB.pickup_item("kunai")
 		ItemDB.pickup_item("fish")
 		ItemDB.pickup_item("fish")
-		CardDB.pickup_card("two handse")
+		CardDB.pickup_card("light me up")
 		Game.once = true
 
 func _enter_tree():
@@ -61,6 +63,7 @@ func move_update():
 
 func _exit_tree():
 	_animation.stop_all()
+	_animation.queue_free()
 
 func ready_up():
 	$enemy_position.add_child(_enemies.enemy_setup(EnemyDB.random_enemy()))
@@ -116,16 +119,6 @@ func _update_discard_pile(new_size):
 func _update_player_focus():
 	$img_energy/lbl_energy.text = "%d/%d" % [Game.focus, Game.focus]
 
-func _toggle_in():
-	_animation.interpolate_property(
-		$Layer/Alpha, "modulate", $Layer/Alpha.modulate, Color(0,0,0,0.4), 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT)
-	_animation.start()
-
-func _toggle_out():
-	_animation.interpolate_property(
-		$Layer/Alpha, "modulate", $Layer/Alpha.modulate, Color(0,0,0,0), 0.4, Tween.TRANS_LINEAR, Tween.EASE_OUT)
-	_animation.start()
-
 func _on_btn_exit_pressed():
 	Game.return_state()
 	emit_signal("next_screen", "menu")
@@ -167,6 +160,7 @@ func end_turn():
 		yield(Game._stepper,"timeout")
 	_change_step_text("Your turn")
 	Game.moves = Game.max_moves
+	Game.temp_buffs.clear()
 	move_update()
 	$Inventory.played = false
 

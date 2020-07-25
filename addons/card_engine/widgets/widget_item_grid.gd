@@ -1,6 +1,7 @@
 extends Control
 
 const single_grid = preload("res://items/single_grid.tscn")
+const crafty = preload("res://ingredients/crafty.tscn")
 
 var grid = {}
 var cell_size = 82.5
@@ -9,6 +10,7 @@ var grid_height = 0
 var curr_grid_width = 10
 var curr_grid_height = 0
 var _focused_item
+var panel = null
 
 signal play(item)
 
@@ -85,17 +87,24 @@ func _process(delta):
 		rotate("left")
 	if Input.is_action_just_pressed("turn_right"):
 		rotate("right")
-	if get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) == null and item_held == null and !inventory.hand:
+	if get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) == null and item_held == null and !inventory.hand_play and get_global_rect().has_point(cursor_pos):
 		Game.player.animation("rummage")
-	elif  get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) != null and item_held == null and !inventory.hand:
+	elif  get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) != null and item_held == null and !inventory.hand_play and get_global_rect().has_point(cursor_pos):
 		Game.player.animation("searching")
 	if item_held != null:
 		under_item = above_item()
 		if under_item != null:
 			if IngredientDB.can_craft(under_item.title, item_held.title) and !craft_ready:
 				craft_ready = true
-				under_item.emit_signal("shake")
 				Game.player.animation("craft")
+				panel = display_craft(IngredientDB.craft(under_item.title, item_held.title))
+				panel.show_on_top = true
+				under_item.add_child(panel)
+				under_item.bring_super_front()
+				panel.curr_item.emit_signal("shake")
+				panel.connect("shake", self, "_on_under_item_shake_done")
+		else:
+			turn_off_panel()
 		if distance_check() and !craft_ready:
 			show_position()
 			Game.player.animation("ready")
@@ -108,6 +117,15 @@ func _process(delta):
 	if item_held == null or under_item == null:
 		craftables = null
 		craft_ready = false
+		turn_off_panel()
+
+func display_craft(crafted_item):
+	crafted_item.set_size(crafted_item.size * cell_size)
+	crafted_item.set_scale(rect_scale * item_scale)
+	var craft_panel = crafty.instance()
+	craft_panel.setup(crafted_item.real_title, crafted_item.desc, crafted_item)
+	craft_panel.rect_position = Vector2(-350 + (crafted_item.size.x * cell_size / 2), -550)
+	return craft_panel
 
 func save_locations():
 	Inventory.item_locations = {}
@@ -126,6 +144,8 @@ func save_locations():
 func _on_under_item_shake_done():
 	if item_held == null or under_item == null:
 		return
+	if item_held.title.empty() or under_item.title.empty():
+		return
 	craftables = [under_item.title,item_held.title]
 	print(craftables)
 
@@ -134,6 +154,12 @@ func above_item():
 	if under_item != null:
 		return under_item
 	return null
+
+func turn_off_panel():
+	if panel == null:
+		return
+	panel.queue_free()
+	panel = null
 
 func turn_off_texture():
 	if item_texture == null:
@@ -294,7 +320,7 @@ func grab(cursor_pos):
 			item_offset = item_held.global_position - cursor_pos
 			$items.move_child(item_held, get_child_count())
 			item_held.bring_front()
-			Game.player.animation("ready")
+			Game.player.animation(item_held.anim_ready)
 
 func rotate(rotation):
 	if item_held == null:
@@ -336,21 +362,28 @@ func grab_item(pos):
 func release(cursor_pos):
 	if item_held == null:
 		return
+	item_held.reset_z_index()
 	var c = get_container_under_cursor(cursor_pos)
 	if c == null:
 		if !item_held.values.empty():
 			emit_signal("play", item_held, item_held.targets, name, item_held.bars)
+		elif !last_available_pos.empty():
+			insert_item_at_last_available_spot(item_held, last_available_pos)
+			item_held = null
 		else:
 			return_item()
 			Game.player.animation("default")
 	elif c.has_method("insert_item"):
 		Game.player.animation("default")
 		if c.insert_item(item_held):
-			item_held.reset_z_index()
 			item_held = null
 		elif !last_available_pos.empty():
 			insert_item_at_last_available_spot(item_held, last_available_pos)
-			item_held.reset_z_index()
+			item_held = null
+		else:
+			return_item()
+	elif c.has_method("trinket_insert") and item_held.tags.has("trinket"):
+		if c.trinket_insert(item_held):
 			item_held = null
 		else:
 			return_item()
@@ -374,9 +407,14 @@ func craft(lower, higher, result):
 
 func get_container_under_cursor(cursor_pos):
 	var containers = [self]
+	for trinket in Game.trinkets:
+		containers.append(trinket)
 	for c in containers:
-		if c.get_global_rect().has_point(cursor_pos):
-			return c
+		if c.is_inside_tree():
+			if c.get_global_rect().has_point(cursor_pos):
+				return c
+	for trinket in Game.trinkets:
+		containers.erase(trinket)
 	return null
 
 func insert_item_at_last_available_spot(item, spot):
@@ -422,7 +460,9 @@ func set_items():
 		remove_child(child)
 
 	for item_id in Inventory.player_inventory.items:
-		set_item(ItemDB.item_setup(item_id))
+		var temp = ItemDB.item_setup(item_id)
+		set_item(temp)
+		temp.connect("shake_done", self, "_on_under_item_shake_done")
 
 func spot_check(x,y):
 	if !grid[x][y]["carrying"] and grid[x][y]["available"] and !grid[x][y]["infected"]:

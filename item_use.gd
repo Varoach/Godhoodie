@@ -6,9 +6,7 @@ var item_everyone_ref = funcref(self, "everyone_item")
 var item_random_ref = funcref(self, "random_item")
 var item_first_ref = funcref(self, "first_item")
 
-#var jutsu_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
 var item_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref}
-#var weapon_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref}
 
 func get_item_use(case, use):
 	if use in case:
@@ -18,8 +16,13 @@ func get_item_use(case, use):
 
 func apply_item(item, target):
 	for value in item.values:
+		var temp_value = item.values[value]
+		if Game.temp_buffs.has(value):
+			temp_value *= Game.temp_buffs[value]
+			print(temp_value)
+			print(Game.temp_buffs)
 		if target != null:
-			target.use(value, item.values[value])
+			target.use(value, temp_value)
 
 func enemies_item(item, target = null):
 	for target in Game.enemy_targets:

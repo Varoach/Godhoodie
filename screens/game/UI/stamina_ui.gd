@@ -11,7 +11,7 @@ func _ready():
 	stamina_set()
 
 func stamina_create():
-	for i in range(Game.bars.stamina):
+	for _i in range(Game.bars.stamina):
 		var staminab = custom_bar.instance()
 		staminab.texture_off = load(STAMINA_PATH + "1.png")
 		staminab.texture_on = load(STAMINA_PATH + "2.png")

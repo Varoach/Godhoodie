@@ -96,6 +96,30 @@ const CARDS = {
 		"type": "attack",
 		"desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto [color=#2c68a0]$targets[/color]\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]"
 	  }
+	},
+	"light me up": {
+	  "category": "fighter",
+	  "element" : "lightning",
+	  "type": "attack",
+	  "tags": [],
+	  "targets": "enemies",
+	  "images": {
+		"background": "consumables",
+		"picture": "lightning"
+	  },
+	  "values": {
+		"cost": 2,
+		"lightning": 3,
+		"vulnerable": 1,
+	  },
+	  "bars":{
+		"focus": 2
+	  },
+	  "texts": {
+		"name": "Light Me Up",
+		"type": "attack",
+		"desc": "[center]Deal [color=#a02c2c]$lightning[/color] [b][color=#ffe270]$element[/color][/b]damage\nto [color=#2c68a0]$targets[/color]"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
+	  }
 	}
 }
 
@@ -134,7 +158,13 @@ func card_setup(card_id):
 	card.bars = get_card(card_id)["bars"]
 	card.texts = get_card(card_id)["texts"]
 	card.images = get_card(card_id)["images"]
+	if get_card(card_id).has("anim_ready"):
+		card.anim_ready = get_card(card_id)["anim_ready"]
+	if get_card(card_id).has("anim_use"):
+		card.anim_use = get_card(card_id)["anim_use"]
 	if get_card(card_id).has("values"):
 		card.values = get_card(card_id)["values"]
+	if get_card(card_id).has("element"):
+		card.element = get_card(card_id)["element"]
 	card.save_animation_state()
 	return card

@@ -57,11 +57,11 @@ func _abilities():
 	return curr_ability
 
 func _damage_received(value):
-	$animations.play("damage")
+#	$animations.play("damage")
 	healthbar.negative_health_update(value)
 
 func _healing_received(value):
-	$animations.play("defend")
+#	$animations.play("defend")
 	healthbar.positive_health_update(value)
 
 func play_turn():
@@ -78,7 +78,7 @@ func cast(ability):
 		target = self
 		type = "heal"
 	Game.enemy_use(type, target, ability.values()[0])
-	$animations.play("attack")
+#	$animations.play("attack")
 
 func enemy_setup(enemy_id):
 	var single_enemy = load(EnemyDB.get_enemy(enemy_id)["path"])

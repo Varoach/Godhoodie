@@ -1,9 +1,9 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://addons/card_engine/widgets/widget_card.gd" type="Script" id=1]
 [ext_resource path="res://addons/card_engine/icons/card-node.png" type="Texture" id=2]
 [ext_resource path="res://cards/images/card-background-consumables.png" type="Texture" id=3]
-[ext_resource path="res://cards/images/card-picture-placeholder.png" type="Texture" id=4]
+[ext_resource path="res://cards/images/card-picture-lightning.png" type="Texture" id=4]
 [ext_resource path="res://cards/images/card-cost-default.png" type="Texture" id=5]
 [ext_resource path="res://addons/card_engine/demo/Rajdhani-Bold.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://cards/images/card-name-default.png" type="Texture" id=7]
@@ -12,7 +12,6 @@
 [ext_resource path="res://cards/images/card-desc-default.png" type="Texture" id=10]
 [ext_resource path="res://cards/images/card-back-consumables.png" type="Texture" id=11]
 [ext_resource path="res://assets/fonts/togalite/togalite-heavy.otf" type="DynamicFontData" id=12]
-[ext_resource path="res://assets/fonts/togalite/togalite-bold.otf" type="DynamicFontData" id=13]
 [ext_resource path="res://Rajdhani-Bold.ttf" type="DynamicFontData" id=14]
 
 [sub_resource type="DynamicFont" id=1]
@@ -21,7 +20,7 @@ use_filter = true
 font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 125
+size = 150
 outline_size = 10
 outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
@@ -34,13 +33,15 @@ use_filter = true
 font_data = ExtResource( 9 )
 
 [sub_resource type="DynamicFont" id=4]
-size = 100
+size = 120
+outline_size = 15
+outline_color = Color( 0.286275, 0.286275, 0.286275, 1 )
 use_mipmaps = true
 use_filter = true
-font_data = ExtResource( 13 )
+font_data = ExtResource( 12 )
 
 [sub_resource type="DynamicFont" id=5]
-size = 100
+size = 120
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 12 )
@@ -115,31 +116,31 @@ tracks/4/keys = {
 "values": [ true, false ]
 }
 tracks/5/type = "value"
-tracks/5/path = NodePath("card_con/img_picture:visible")
+tracks/5/path = NodePath("card_con:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ true, false ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("card_con:scale")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 0, 1 ), Vector2( 1, 1 ) ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("card_con/img_back_picture:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = false
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
 tracks/7/type = "value"
-tracks/7/path = NodePath("card_con/img_back_picture:visible")
+tracks/7/path = NodePath("card_con/img_picture:visible")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/imported = false
@@ -214,31 +215,31 @@ tracks/4/keys = {
 "values": [ false, true ]
 }
 tracks/5/type = "value"
-tracks/5/path = NodePath("card_con/img_picture:visible")
+tracks/5/path = NodePath("card_con:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
-tracks/6/type = "value"
-tracks/6/path = NodePath("card_con:scale")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 0, 1 ), Vector2( 1, 1 ) ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("card_con/img_back_picture:visible")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = false
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
 tracks/7/type = "value"
-tracks/7/path = NodePath("card_con/img_back_picture:visible")
+tracks/7/path = NodePath("card_con/img_picture:visible")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/imported = false
@@ -256,28 +257,32 @@ script = ExtResource( 1 )
 __meta__ = {
 "_editor_icon": ExtResource( 2 )
 }
-default_size = Vector2( 1200, 1600 )
 animation_speed = 0.6
+default_size = Vector2( 1200, 1600 )
 
 [node name="card_con" type="Node2D" parent="."]
 
 [node name="img_background" type="Sprite" parent="card_con"]
+visible = false
 position = Vector2( 0, 248 )
 texture = ExtResource( 3 )
 region_filter_clip = true
 
 [node name="img_back" type="Sprite" parent="card_con"]
-visible = false
 position = Vector2( 0, 248 )
 texture = ExtResource( 11 )
 region_filter_clip = true
 
-[node name="img_picture" type="Sprite" parent="card_con"]
-position = Vector2( 0, -72.1872 )
-scale = Vector2( 2.45914, 2.45914 )
+[node name="img_picture" type="TextureRect" parent="card_con"]
+margin_left = -521.0
+margin_top = -380.0
+margin_right = 521.0
+margin_bottom = 877.0
 texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
 __meta__ = {
-"_editor_description_": ""
+"_edit_use_anchors_": false
 }
 
 [node name="img_cost" type="Sprite" parent="card_con"]
@@ -300,14 +305,15 @@ align = 1
 valign = 1
 
 [node name="lbl_name" type="Label" parent="card_con"]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -382.0
-margin_top = 192.0
-margin_right = 384.0
-margin_bottom = 499.0
+margin_left = -521.0
+margin_top = -30.2381
+margin_right = 521.0
+margin_bottom = 276.762
 mouse_filter = 1
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -350,10 +356,11 @@ align = 1
 valign = 1
 
 [node name="lbl_desc" type="RichTextLabel" parent="card_con"]
+visible = false
 margin_left = -521.0
-margin_top = 572.0
+margin_top = 456.0
 margin_right = 521.0
-margin_bottom = 878.0
+margin_bottom = 877.0
 mouse_filter = 1
 custom_fonts/bold_font = SubResource( 4 )
 custom_fonts/normal_font = SubResource( 5 )
@@ -382,9 +389,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -382.0
-margin_top = -380.0
+margin_top = -472.0
 margin_right = 384.0
-margin_bottom = 877.0
+margin_bottom = 980.0
 mouse_filter = 1
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )

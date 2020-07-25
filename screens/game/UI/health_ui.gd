@@ -9,7 +9,7 @@ func _ready():
 	heart_set()
 
 func heart_create():
-	for i in range(Game.bars.health/3):
+	for _i in range(Game.bars.health/3):
 		var full_heart = Sprite.new()
 		full_heart.texture = load(HEART_PATH + "1.png")
 		full_heart.hframes = $health.hframes
@@ -53,7 +53,7 @@ func heart_set():
 func heart_change():
 	for child in $health.get_children():
 		$health.remove_child(child)
-	for i in range(Game.curr_bars.health/3):
+	for _i in range(Game.curr_bars.health/3):
 		var new_heart = Sprite.new()
 		new_heart.texture = load(HEART_PATH + "4.png")
 		new_heart.hframes = $health.hframes

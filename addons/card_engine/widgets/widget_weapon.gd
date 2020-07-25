@@ -20,20 +20,13 @@ func _ready():
 func _process(delta):
 	var cursor_pos = get_global_mouse_position()
 
-func _on_weapon_added():
-	set_weapons()
+func _on_weapon_added(weapon):
+	set_weapon(weapon)
 
-func set_weapons():
-	var pos = Vector2(0,0)
-	for child in get_children():
-		remove_child(child)
-
-	for weapon_id in Inventory.player_inventory.weapons:
-		var weapon = WeaponDB.whole_setup(weapon_id)
-		weapon.position = pos
-		add_child(weapon)
-		pos += Vector2(0,237)
-		if !weapon.ready:
+func set_weapon(weapon):
+	weapon.position = Vector2(0, 0) + Vector2(0, 237) * (Inventory.weapons-1)
+	add_child(weapon)
+	if !weapon.ready:
 #			weapon.connect("mouse_entered", self, "_on_weapon_mouse_entered", [weapon])
 #			weapon.connect("mouse_exited", self, "_on_weapon_mouse_exited", [weapon])
 			weapon.connect("left_pressed", self, "_on_weapon_left_pressed", [weapon])
@@ -43,78 +36,52 @@ func set_weapons():
 #			weapon.connect("mouse_motion", self, "_on_mouse_motion", [weapon])
 			weapon.ready = true
 
-func set_focused_weapon(weapon):
-	if _focused_weapon != null: return
-	_focused_weapon = weapon
-	weapon.save_animation_state()
+func set_weapons():
+	var pos = Vector2(0,0)
+	for child in get_children():
+		remove_child(child)
 
-func unset_focused_weapon(weapon):
-	if _focused_weapon != weapon: return
-	weapon.pop_animation_state()
-	_focused_weapon = null
-	weapon.reset_z_index()
-
-func _on_weapon_mouse_entered(weapon):
-	if weapon.highlight: return
-	set_focused_weapon(weapon)
-
-func _on_weapon_mouse_exited(weapon):
-	if weapon.highlight: return
-	unset_focused_weapon(weapon)
+	if Inventory.weapons > 0:
+		for weapon_id in Inventory.player_inventory.weapons:
+			if !Inventory.player_inventory.weapons[weapon_id].empty():
+				var weapon = WeaponDB.whole_setup(Inventory.player_inventory.weapons[weapon_id].title)
+				weapon.weapon.slot = weapon_id
+				var trinket_slots = 0
+				add_child(weapon)
+				for trinket in Inventory.player_inventory.weapons[weapon_id].trinkets:
+					if Inventory.player_inventory.weapons[weapon_id].trinkets[trinket] != null:
+						weapon.weapon_trinkets.get_child(trinket_slots).trinket_set(ItemDB.trinket_setup(Inventory.player_inventory.weapons[weapon_id].trinkets[trinket]))
+					trinket_slots += 1
+				weapon.position = pos
+				pos += Vector2(0,237)
+				if !weapon.ready:
+		#			weapon.connect("mouse_entered", self, "_on_weapon_mouse_entered", [weapon])
+		#			weapon.connect("mouse_exited", self, "_on_weapon_mouse_exited", [weapon])
+					weapon.connect("left_pressed", self, "_on_weapon_left_pressed", [weapon])
+		#			weapon.connect("left_released", self, "_on_weapon_left_released", [weapon])
+		#			weapon.connect("right_pressed", self, "_on_weapon_right_pressed", [weapon])
+		#			weapon.connect("right_released", self, "_on_weapon_right_released", [weapon])
+		#			weapon.connect("mouse_motion", self, "_on_mouse_motion", [weapon])
+					weapon.ready = true
 
 func _on_weapon_left_pressed(weapon):
-#	if _focused_weapon != weapon: return
+#	if _focused_weapon != weapon: return 
 	play(weapon)
-
-func _on_weapon_left_released(weapon):
-	if _focused_weapon != weapon: return
-	if _focused_weapon.highlight: return
-
-func _on_weapon_right_pressed(weapon):
-	if _focused_weapon != weapon: return
-	if weapon.highlight:
-		unset_highlight_weapon(weapon)
-	else:
-		set_highlight_weapon(weapon)
-		inventory.emit_signal("highlight", weapon)
-
-func _on_weapon_right_released(weapon):
-	if _focused_weapon != weapon: return
-
-func unset_highlight_weapon(weapon):
-	if _focused_weapon != weapon: return
-	weapon.highlight = false
-	weapon.pop_animation_state_global()
-	inventory.emit_signal("unhighlight", weapon)
-
-func set_highlight_weapon(weapon):
-	if _focused_weapon != weapon: return
-	weapon.highlight = true
-	weapon.display_center()
 
 func return_weapon():
 	Inventory.add_weapon(_weapon_held)
 	_weapon_held.return_weapon_state()
 	_weapon_held = null
 
-func get_weapon_under_pos(pos):
-	for weapon in Inventory.player_inventory.weapons:
-		if weapon == null:
-			continue
-		if weapon.get_global_rect().has_point(pos):
-			return weapon
-	return null
-
 func play(weapon):
 	emit_signal("play", weapon.get_weapon(), weapon.get_weapon().targets, name, weapon.get_weapon().bars)
 
 func drop_weapon():
-	Inventory.remove_weapon(_weapon_held)
+	Inventory.remove_weapon(_weapon_held.slot)
 	_weapon_held.delete_background()
+	_weapon_held.queue_free()
 	_weapon_held = null
+	set_weapons()
 
 func _on_weapon_played(weapon, status):
-	if status:
-		unset_focused_weapon(weapon)
-	else:
-		unset_focused_weapon(weapon)
+	return

@@ -10,6 +10,7 @@ const STEP_WAIT_TIME = 0.5
 signal turn_started()
 signal player_check()
 signal player_end()
+signal lightning()
 
 var targets = []
 var items = []
@@ -24,11 +25,14 @@ var player
 var tacos = false
 var highlight = false
 var once = false
-var bars = {"health" : 9, "focus" : 3, "stamina" : 5}
+var bars = {"health" : 9, "focus" : 8, "stamina" : 5}
 var curr_bars = {}
 var bar_press = {"focus" : 0, "stamina" : 0}
 var curr_bar_press = {}
+var temp_buffs = {}
 var count = 0
+var trinkets = []
+var inventory = null
 
 var _stepper = Timer.new()
 var _steps = ["start_game", "your_turn"]
@@ -77,29 +81,25 @@ func return_state():
 	_current_step = 0
 	targets.clear()
 	enemy_targets.clear()
+	trinkets.clear()
+	items.clear()
+	temp_buffs.clear()
+	Relics.reset()
 
-#func weapon_use(weapon, curr_target = null):
-#	if weapon.targets in ItemUses.weapon_use_case:
-#		ItemUses.weapon_use_case[weapon.targets].call_func(weapon, curr_target)
-#	player.get_node("animations").play("attack")
-
-func item_use(item, hand, curr_target = null):
-	print(hand)
-	if item.targets in ItemUses.item_use_case:
-		ItemUses.item_use_case[item.targets].call_func(item, curr_target)
-	if item.values.has("attack") and hand != "jutsus":
-		player.animation("attack")
-		yield(get_tree().create_timer(0.25),"timeout")
-		player.animation("default")
-	elif item.values.has("attack") and hand == "jutsus":
-		player.animator.play("cast")
-		yield(get_tree().create_timer(0.25),"timeout")
-		player.animation("default")
+func item_use(item, handy, curr_target = null):
+	var curr_attacks = 1
+	if item.tags.has("melee"):
+		var melee_offset = Vector2(100, 0)
+		Game.player.attack_position(player.global_position + melee_offset)
+#		Game.player.attack_position(enemy_targets[0].global_position - melee_offset)
+	if item.values.has("attacks"):
+		curr_attacks = item.values["attacks"]
+	for i in range(curr_attacks):
+		if item.targets in ItemUses.item_use_case:
+			ItemUses.item_use_case[item.targets].call_func(item, curr_target)
+	if !item.anim_use.empty():
+		yield(player._animation, "tween_completed")
+		player.animation(item.anim_use)
 	else:
 		player.animation("default")
-#	player.get_node("animations").play("attack")
-
-#func jutsu_use(card, curr_target = null):
-#	if card.targets in ItemUses.jutsu_use_case:
-#		ItemUses.jutsu_use_case[card.targets].call_func(card, curr_target)
-#	player.get_node("animations").play("attack")
+	

@@ -46,6 +46,10 @@ func final_text(card, text):
 	var final_text = card.texts[text]
 	for value in card.values:
 		final_text = final_text.replace("$%s" % value, "%d" % final_value(card, value))
+	if !card.element.empty():
+		final_text = final_text.replace("$%s" % "element", card.element + " ")
+	else:
+		final_text = final_text.replace("$%s" % "element", "")
 	final_text = final_text.replace("$%s" % "targets", card.targets)
 	return final_text
 

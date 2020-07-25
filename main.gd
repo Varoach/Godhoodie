@@ -5,6 +5,7 @@ var _screens = {
 		"menu": preload("res://screens/menu/screen_menu.tscn"),
 		"library": preload("res://screens/library/screen_library.tscn"),
 		"new_game": preload("res://screens/new_game/screen_new_game.tscn"),
+		"map": null,
 		"game": preload("res://screens/game/screen_game.tscn")
 	}
 
