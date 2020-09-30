@@ -13,13 +13,6 @@ const FORMAT_CARDS = "card-%s-%s.png"
 const PLAYER_PLAYER = "player"
 const PLAYER_ENEMY  = "enemy"
 
-# Decks name
-const DECK_PLAYER = "player_deck"
-
-# Piles name
-const PILE_DRAW    = "draw_pile"
-const PILE_DISCARD = "discard_pile"
-
 var _custom_card = preload("res://cards/custom_card.tscn")
 
 # Returns the path to the file containing the card database
@@ -42,10 +35,17 @@ func final_value(card, value):
 	else:
 		return calculate_final_value(card, value)
 
+func test_value(card, value):
+	pass
+
 func final_text(card, text):
 	var final_text = card.texts[text]
 	for value in card.values:
-		final_text = final_text.replace("$%s" % value, "%d" % final_value(card, value))
+		final_text = final_text.replace("$%s" % value, "%d" % Game.test_item(card, value))
+#		if int(Game.test_item(card, value)) != card.values[value]:
+#			final_text = final_text.replace("$%s" % value, "%d" % Game.test_item(card, value) + "*")
+#		else:
+#			final_text = final_text.replace("$%s" % value, "%d" % Game.test_item(card, value))
 	if !card.element.empty():
 		final_text = final_text.replace("$%s" % "element", card.element + " ")
 	else:

@@ -6,8 +6,8 @@ signal mouse_exited()
 var hpOffset = Vector2(0, -150)
 var shOffset = Vector2(0, 0)
 var attack
-var focused
 var defense = 0
+var health
 var dead = false
 var attack_ref = funcref(self, "_damage_received")
 var lightning_ref = funcref(self, "_lightning_received")
@@ -29,7 +29,7 @@ func _on_mouse_area_exited():
 	emit_signal("mouse_exited")
 
 func check_focus():
-	focused = $mouse_area.get_rect().has_point(get_local_mouse_position())
+	var focused = $mouse_area.get_rect().has_point(get_local_mouse_position())
 	if focused:
 		focused = true
 		return true
@@ -47,3 +47,6 @@ func _lightning_received(value):
 
 func _on_dead():
 	dead = true
+
+func play_effect(effect):
+	$effect.play_effect(effect)

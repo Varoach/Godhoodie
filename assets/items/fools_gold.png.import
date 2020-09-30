@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fools_gold.png-00577d94f19d66b21a824c7fdf1fe934.stex"
+path="res://.import/fools_gold.png-132f6353a1066e0de925148c86d6323e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/fools_gold.png"
-dest_files=[ "res://.import/fools_gold.png-00577d94f19d66b21a824c7fdf1fe934.stex" ]
+source_file="res://Assets/items/fools_gold.png"
+dest_files=[ "res://.import/fools_gold.png-132f6353a1066e0de925148c86d6323e.stex" ]
 
 [params]
 

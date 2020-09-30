@@ -55,8 +55,11 @@ func playable(targets):#card._card_data.targets
 			return true
 		else:
 			return false
-	elif targets == "first":
-		return true
+#	elif targets == "walls":
+#		if $".."._check_walls() != null:
+#			return true
+#		else:
+#			return false
 	elif targets != "single":
 		if $"../Playable".get_rect().has_point(get_global_mouse_position()):
 			return true

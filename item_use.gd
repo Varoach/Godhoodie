@@ -1,12 +1,13 @@
 extends Node
 
+var item_test_ref = funcref(self, "test_item")
 var item_single_ref = funcref(self, "apply_item")
 var item_enemies_ref = funcref(self, "enemies_item")
 var item_everyone_ref = funcref(self, "everyone_item")
 var item_random_ref = funcref(self, "random_item")
 var item_first_ref = funcref(self, "first_item")
 
-var item_use_case = {"single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref}
+var item_use_case = {"test" : item_test_ref, "single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref}
 
 func get_item_use(case, use):
 	if use in case:
@@ -19,10 +20,11 @@ func apply_item(item, target):
 		var temp_value = item.values[value]
 		if Game.temp_buffs.has(value):
 			temp_value *= Game.temp_buffs[value]
-			print(temp_value)
-			print(Game.temp_buffs)
+#			print(temp_value)
+#			print(Game.temp_buffs)
 		if target != null:
 			target.use(value, temp_value)
+			target.play_effect(item.title)
 
 func enemies_item(item, target = null):
 	for target in Game.enemy_targets:
@@ -50,3 +52,9 @@ func random_hit_item(item):
 		apply_item(item, Game.enemy_targets[randi() % Game.enemy_targets.size()])
 	elif target_type == "everyone":
 		apply_item(item, Game.targets[(randi() % Game.targets.size())])
+
+func test_item(item, value):
+	var temp_value = item.values[value]
+	if Game.temp_buffs.has(value):
+		temp_value *= Game.temp_buffs[value]
+	return temp_value

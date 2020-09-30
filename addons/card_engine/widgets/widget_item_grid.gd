@@ -85,7 +85,7 @@ func _process(delta):
 		save_locations()
 	if Input.is_action_just_pressed("turn_left"):
 		rotate("left")
-	if Input.is_action_just_pressed("turn_right"):
+	elif Input.is_action_just_pressed("turn_right"):
 		rotate("right")
 	if get_container_under_cursor(cursor_pos) != null and get_item_under_pos(cursor_pos) == null and item_held == null and !inventory.hand_play and get_global_rect().has_point(cursor_pos):
 		Game.player.animation("rummage")
@@ -147,7 +147,6 @@ func _on_under_item_shake_done():
 	if item_held.title.empty() or under_item.title.empty():
 		return
 	craftables = [under_item.title,item_held.title]
-	print(craftables)
 
 func above_item():
 	var under_item = get_item_under_pos(item_held.global_position + (item_held.get_size()/2))

@@ -29,7 +29,6 @@ scale = Vector2( 1.5, 1.5 )
 texture = SubResource( 1 )
 
 [node name="appearance" parent="character" index="1"]
-position = Vector2( 0, 0 )
 scale = Vector2( 0.5, 0.5 )
 frames = SubResource( 2 )
 
@@ -48,3 +47,6 @@ margin_left = -399.5
 margin_top = -445.728
 margin_right = 399.5
 margin_bottom = 296.272
+
+[node name="effect" parent="." index="4"]
+position = Vector2( 0, -445.728 )

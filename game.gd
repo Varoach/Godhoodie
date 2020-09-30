@@ -11,21 +11,22 @@ signal turn_started()
 signal player_check()
 signal player_end()
 signal lightning()
+signal update_cards()
 
 var targets = []
 var items = []
 var enemy_targets = []
+var walls = []
 
-var max_moves = 2
 var moves
 
 var character = ""
-
 var player
+
 var tacos = false
 var highlight = false
 var once = false
-var bars = {"health" : 9, "focus" : 8, "stamina" : 5}
+var bars = {"health" : 9, "focus" : 8, "stamina" : 5, "strength" : 0, "speed" : 2, "perception" : 0}
 var curr_bars = {}
 var bar_press = {"focus" : 0, "stamina" : 0}
 var curr_bar_press = {}
@@ -33,6 +34,7 @@ var temp_buffs = {}
 var count = 0
 var trinkets = []
 var inventory = null
+var wall_defense = 0
 
 var _stepper = Timer.new()
 var _steps = ["start_game", "your_turn"]
@@ -74,17 +76,8 @@ func _on_stepper_timeout():
 	#print("current step: " + String(_current_step))
 
 func enemy_use(ability, target, value):
-	target.use(ability, value)
-
-func return_state():
-	_steps = ["start_game", "your_turn"]
-	_current_step = 0
-	targets.clear()
-	enemy_targets.clear()
-	trinkets.clear()
-	items.clear()
-	temp_buffs.clear()
-	Relics.reset()
+	if walls.empty():
+		target.use(ability, value)
 
 func item_use(item, handy, curr_target = null):
 	var curr_attacks = 1
@@ -102,4 +95,31 @@ func item_use(item, handy, curr_target = null):
 		player.animation(item.anim_use)
 	else:
 		player.animation("default")
-	
+
+func locate(title):
+	var results = {}
+	results.title = title
+	if CardDB.get_card(title):
+		results.category = "card"
+	elif ItemDB.get_item(title):
+		results.category = "item"
+	elif WeaponDB.get_item(title):
+		results.category = "weapon"
+	return results
+
+func test_item(item, value):
+	return ItemUses.item_use_case["test"].call_func(item, value)
+
+func bar_add(bar, value):
+	bars[bar] += value
+
+func return_state():
+	_steps = ["start_game", "your_turn"]
+	_current_step = 0
+	targets.clear()
+	enemy_targets.clear()
+	trinkets.clear()
+	items.clear()
+	temp_buffs.clear()
+	walls.clear()
+	Relics.reset()

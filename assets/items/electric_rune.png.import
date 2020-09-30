@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/electric_rune.png-8e039e0fcfd3edcfb9380d3b9d320697.stex"
+path="res://.import/electric_rune.png-358ac9e4e74390b7563555b433a1b6ea.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/electric_rune.png"
-dest_files=[ "res://.import/electric_rune.png-8e039e0fcfd3edcfb9380d3b9d320697.stex" ]
+source_file="res://Assets/items/electric_rune.png"
+dest_files=[ "res://.import/electric_rune.png-358ac9e4e74390b7563555b433a1b6ea.stex" ]
 
 [params]
 

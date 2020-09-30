@@ -23,28 +23,6 @@ func _ready():
 	_is_ready = true
 	healthbar.connect("dead", self, "_on_dead")
 	healthbar.set_position(Vector2(healthbar.rect_position.x, $mouse_area.rect_position.y) + hpOffset * ($character/appearance.scale.y*1.5))
-#	_update_enemy()
-#
-#func _update_enemy():
-#	if _enemy_data == null || !_is_ready: return
-#
-#	# Images update
-#	for image in _enemy_data.images:
-#		var node = find_node(FORMAT_IMAGE % image)
-#		if node != null:
-#			var id = _enemy_data.images[image]
-#			if id != "default":
-#				node.texture = load(EnemyEngine.enemy_image(image, id))
-#
-#	var node = find_node("healthbar")
-#	var id = _enemy_data.health
-#	node.max_value = id
-#
-#
-#func set_enemy_data(enemy_data):
-#	_enemy_data = enemy_data
-#	_update_enemy()
-#	_enemy_data.connect("changed", self, "_update_enemy")
 
 func _abilities():
 	var curr_ability = abilities.duplicate()
@@ -57,6 +35,23 @@ func _abilities():
 	return curr_ability
 
 func _damage_received(value):
+	if Game.wall_defense > value:
+		Game.wall_defense -= value
+		value = 0
+	elif Game.wall_defense >= Game.wall_defense:
+		value -= Game.wall_defense
+		Game.wall_defense = 0
+	if defense > value:
+		defense -= value
+		value = 0
+	elif value >= defense:
+		value -= defense
+		defense = 0
+	$character/defense.text = String(defense)
+	if value <= 0:
+#		$animations.play("defend")
+		return
+#	$animations.play("damage")
 #	$animations.play("damage")
 	healthbar.negative_health_update(value)
 

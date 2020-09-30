@@ -50,7 +50,7 @@ func calculate_scale(size):
 
 func _ready():
 	_is_ready = true
-	
+	Game.connect("update_cards", self, "_update_card")
 	$mouse_area.connect("mouse_entered", self, "_on_mouse_area_entered")
 	$mouse_area.connect("mouse_exited", self, "_on_mouse_area_exited")
 	$mouse_area.connect("gui_input", self, "_on_mouse_area_event")
@@ -68,7 +68,8 @@ func _update_card():
 	for value in values:
 		var node = find_node(FORMAT_LABEL % value)
 		if node != null:
-			node.text = "%d" % Interface.final_value(self, value)
+			node.text = "%d" % Game.test_item(self, value)
+#			node.text = "%d" % Interface.final_value(self, value)
 	
 	# Text update
 	for text in texts:

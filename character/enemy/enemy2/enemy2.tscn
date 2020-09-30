@@ -44,7 +44,10 @@ margin_right = -434.797
 margin_bottom = 41.0
 
 [node name="mouse_area" parent="." index="3"]
-margin_left = -440.6
-margin_top = -536.0
-margin_right = 441.4
+margin_left = -441.0
+margin_top = -469.0
+margin_right = 441.0
 margin_bottom = 536.0
+
+[node name="effect" parent="." index="4"]
+position = Vector2( 0, -300 )

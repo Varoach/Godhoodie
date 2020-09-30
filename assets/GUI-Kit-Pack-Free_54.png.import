@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/GUI-Kit-Pack-Free_54.png-efcbc6b9182c2775d066dfbfb04cfc27.stex"
+path="res://.import/GUI-Kit-Pack-Free_54.png-1315211de241b82a6e8078e97144d71c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/GUI-Kit-Pack-Free_54.png"
-dest_files=[ "res://.import/GUI-Kit-Pack-Free_54.png-efcbc6b9182c2775d066dfbfb04cfc27.stex" ]
+source_file="res://Assets/GUI-Kit-Pack-Free_54.png"
+dest_files=[ "res://.import/GUI-Kit-Pack-Free_54.png-1315211de241b82a6e8078e97144d71c.stex" ]
 
 [params]
 

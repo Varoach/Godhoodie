@@ -5,6 +5,9 @@ signal card_added()
 const custom_card = preload("res://cards/custom_card.tscn")
 
 const CARD_PATH = "res://cards/"
+const WALL_PATH = "res://summons/walls/"
+const earth_color = "be9071"
+const lightning_color = "a02c2c"
 
 const CARDS = {
 		"sword1": {
@@ -97,7 +100,7 @@ const CARDS = {
 		"desc": "[center]Deal [color=#a02c2c]$attack[/color] damage\nto [color=#2c68a0]$targets[/color]\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]"
 	  }
 	},
-	"light me up": {
+	"falling thunder": {
 	  "category": "fighter",
 	  "element" : "lightning",
 	  "type": "attack",
@@ -110,17 +113,38 @@ const CARDS = {
 	  "values": {
 		"cost": 2,
 		"lightning": 3,
-		"vulnerable": 1,
 	  },
 	  "bars":{
 		"focus": 2
 	  },
 	  "texts": {
-		"name": "Light Me Up",
+		"name": "Falling Thunder",
 		"type": "attack",
-		"desc": "[center]Deal [color=#a02c2c]$lightning[/color] [b][color=#ffe270]$element[/color][/b]damage\nto [color=#2c68a0]$targets[/color]"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
+		"desc": "[center]Deal [color=#" + lightning_color + "]$lightning[/color] [b][color=#ffe270]$element[/color][/b]damage\nto [color=#2c68a0]$targets[/color]"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
 	  }
-	}
+	},
+	"clay wall": {
+	  "category": "fighter",
+	  "element" : "earth",
+	  "type": "summon",
+	  "tags": [],
+	  "targets": "walls",
+	  "images": {
+		"background": "consumables",
+		"picture": "clay-wall",
+	  },
+	  "values": {
+		"health": 3,
+	  },
+	  "bars":{
+		"focus": 2
+	  },
+	  "texts": {
+		"name": "Clay Wall",
+		"type": "summon",
+		"desc": "[center]Summon [b][color=#" + earth_color + "]$element[/color][/b] wall at target location"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
+	  }
+	},
 }
 
 const CARD_BACKS = {
@@ -154,6 +178,9 @@ func card_setup(card_id):
 	var card = custom_card.instance()
 	card.set_meta("id", card_id)
 	card.title = card_id
+	card.type = get_card(card_id)["type"]
+	if card.type == "summon":
+		card.add_to_group("summon")
 	card.targets = get_card(card_id)["targets"]
 	card.bars = get_card(card_id)["bars"]
 	card.texts = get_card(card_id)["texts"]
