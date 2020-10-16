@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/GUI-Kit-Pack-Free_59.png-e5cf45a1fac35c5c22c7bba140833a2f.stex"
+path="res://.import/main_map.png-9d4f17e5ee9d0e6a483a63caf18b9c87.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/GUI-Kit-Pack-Free_59.png"
-dest_files=[ "res://.import/GUI-Kit-Pack-Free_59.png-e5cf45a1fac35c5c22c7bba140833a2f.stex" ]
+source_file="res://character/player/fighter/main_map.png"
+dest_files=[ "res://.import/main_map.png-9d4f17e5ee9d0e6a483a63caf18b9c87.stex" ]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
 flags/filter=true
-flags/mipmaps=false
+flags/mipmaps=true
 flags/anisotropic=false
 flags/srgb=2
 process/fix_alpha_border=true

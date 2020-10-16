@@ -36,16 +36,23 @@ __meta__ = {
 }
 
 [node name="Godhood" type="Label" parent="."]
-anchor_right = 1.0
-anchor_bottom = 0.322
-margin_bottom = -0.520081
+anchor_left = -0.308594
+anchor_top = -3.53213e-09
+anchor_right = 2.0
+anchor_bottom = 1.23148
+margin_left = 1185.0
+margin_top = 100.0
+margin_right = -3840.0
+margin_bottom = -2160.0
 rect_pivot_offset = Vector2( 1920, 450 )
+size_flags_horizontal = 5
+size_flags_vertical = 5
 custom_fonts/font = SubResource( 1 )
 text = "Godhood"
 align = 1
 valign = 1
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 
 [node name="animations" type="AnimationPlayer" parent="."]

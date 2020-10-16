@@ -18,9 +18,29 @@ load_path = "res://.import/character-shadow.png-2729462ed8cd420747cab41e5fa64076
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
+"frames": [ ExtResource( 10 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ null ],
+"loop": true,
+"name": "ready",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "cast",
+"speed": 5.0
+}, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
 "name": "sword_ready",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 11 ), ExtResource( 2 ) ],
+"loop": false,
+"name": "dagger_use",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
@@ -33,35 +53,15 @@ animations = [ {
 "name": "dagger_ready",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 7 ) ],
-"loop": true,
-"name": "sword_use",
-"speed": 3.0
-}, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "rummage",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 11 ), ExtResource( 2 ) ],
-"loop": false,
-"name": "dagger_use",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 8 ) ],
+"frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "cast",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 10 ) ],
-"loop": true,
-"name": "default",
-"speed": 5.0
-}, {
-"frames": [ null ],
-"loop": true,
-"name": "ready",
-"speed": 5.0
+"name": "sword_use",
+"speed": 3.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,

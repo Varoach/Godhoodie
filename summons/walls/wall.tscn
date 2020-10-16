@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://summons/walls/clay-wall.png" type="Texture" id=1]
 [ext_resource path="res://summons/object.gd" type="Script" id=2]
 [ext_resource path="res://screens/game/Bars/healthbar.tscn" type="PackedScene" id=3]
+[ext_resource path="res://screens/game/Bars/healthbar.gd" type="Script" id=4]
 
 [node name="root" type="Node2D"]
 position = Vector2( -5.65308, -432.901 )
@@ -25,5 +26,8 @@ __meta__ = {
 }
 
 [node name="healthbar" parent="." instance=ExtResource( 3 )]
-margin_left = -329.382
-margin_right = 21.6179
+margin_left = -227.5
+margin_top = -85.0
+margin_right = 123.5
+margin_bottom = -1.0
+script = ExtResource( 4 )

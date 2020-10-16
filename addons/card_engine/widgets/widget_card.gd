@@ -14,17 +14,17 @@ signal right_released()
 
 var id       = "" # Identifies the card, unique in the library
 var category = "" # Specifies the card's category
-var element  = ""
+var element  = "" # Specifies the card's elements
 var type     = "" # Specifies the card's type
 var tags     = [] # Lists additional specifiers for the card
-var targets  = ""
+var targets  = "" # Specifies the card's targets
 var images   = {} # Lists the different image used to represent this card
 var values   = {} # Lists the different numerical values for this card
 var texts    = {} # Lists the different texts displayed on the card
-var bars     = {}
-var title
-var anim_ready = ""
-var anim_use = ""
+var bars     = {} # Lists the card's bar usage (health/spirit/focus)
+var title         # Specifies the card's title
+var anim_ready = "" # Animation for ready stance
+var anim_use = "" # Animation when used
 
 # The size the card should be if no specific size apply
 #export(Vector2) var default_size = Vector2(1,1)

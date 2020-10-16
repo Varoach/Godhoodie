@@ -21,6 +21,7 @@ texture_pressed = ExtResource( 2 )
 texture_hover = ExtResource( 3 )
 texture_disabled = ExtResource( 4 )
 texture_focused = ExtResource( 5 )
+stretch_mode = 5
 script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false

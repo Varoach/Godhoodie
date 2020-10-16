@@ -95,7 +95,7 @@ func _process(delta):
 		under_item = above_item()
 		if under_item != null:
 			if IngredientDB.can_craft(under_item.title, item_held.title) and !craft_ready:
-				craft_ready = true
+				craft_ready = true	
 				Game.player.animation("craft")
 				panel = display_craft(IngredientDB.craft(under_item.title, item_held.title))
 				panel.show_on_top = true

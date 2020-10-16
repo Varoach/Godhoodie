@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://screens/game/screen_game.gd" type="Script" id=1]
-[ext_resource path="res://screens/game/background.png" type="Texture" id=2]
+[ext_resource path="res://screens/game/background_2.png" type="Texture" id=2]
 [ext_resource path="res://drops/drops.gd" type="Script" id=4]
 [ext_resource path="res://widgets/icon_button/widget_icon_button.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Rajdhani-Bold.ttf" type="DynamicFontData" id=8]
@@ -136,7 +136,7 @@ mouse_filter = 2
 
 [node name="worldspace" type="Node2D" parent="."]
 position = Vector2( 0, 1346 )
-z_index = 5
+z_index = 1
 z_as_relative = false
 
 [node name="drops" type="Node2D" parent="worldspace"]

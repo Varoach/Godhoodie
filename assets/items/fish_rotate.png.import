@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fish_rotate.png-8e4bb0a4711411e38506776e114b3ac4.stex"
+path="res://.import/fish_rotate.png-605bbfba80b2c3a4d6f569afeacc4f5c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/items/fish_rotate.png"
-dest_files=[ "res://.import/fish_rotate.png-8e4bb0a4711411e38506776e114b3ac4.stex" ]
+source_file="res://assets/items/fish_rotate.png"
+dest_files=[ "res://.import/fish_rotate.png-605bbfba80b2c3a4d6f569afeacc4f5c.stex" ]
 
 [params]
 

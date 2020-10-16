@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/potion_rotate.png-05dee76ffb415617b876adcf6955db21.stex"
+path="res://.import/potion_rotate.png-6bc346e5d4311a88449a948c905a7f81.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/items/potion_rotate.png"
-dest_files=[ "res://.import/potion_rotate.png-05dee76ffb415617b876adcf6955db21.stex" ]
+source_file="res://assets/items/potion_rotate.png"
+dest_files=[ "res://.import/potion_rotate.png-6bc346e5d4311a88449a948c905a7f81.stex" ]
 
 [params]
 

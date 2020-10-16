@@ -12,6 +12,8 @@ signal player_check()
 signal player_end()
 signal lightning()
 signal update_cards()
+signal wall_damage(value)
+signal wall_dead()
 
 var targets = []
 var items = []

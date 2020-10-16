@@ -10,7 +10,7 @@ const earth_color = "be9071"
 const lightning_color = "a02c2c"
 
 const CARDS = {
-		"sword1": {
+	"sword1": {
 	  "category": "fighter",
 	  "type": "attack",
 	  "tags": [],

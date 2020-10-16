@@ -52,6 +52,7 @@ func lift():
 		return
 	mode = RigidBody2D.MODE_KINEMATIC
 	held = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 
 func drop(impulse=Vector2.ZERO):
 	if held:
@@ -61,6 +62,7 @@ func drop(impulse=Vector2.ZERO):
 			mode = RigidBody2D.MODE_RIGID
 			apply_central_impulse(impulse)
 			held = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton:

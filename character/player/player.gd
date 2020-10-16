@@ -35,10 +35,12 @@ func add_defense():
 func _damage_received(value):
 	if Game.wall_defense > value:
 		Game.wall_defense -= value
+		Game.emit_signal("wall_damage", value)
 		value = 0
 	elif Game.wall_defense >= Game.wall_defense:
 		value -= Game.wall_defense
 		Game.wall_defense = 0
+		Game.emit_signal("wall_dead")
 	if defense > value:
 		defense -= value
 		value = 0

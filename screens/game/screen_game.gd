@@ -39,6 +39,7 @@ func _ready():
 	$Inventory.connect("play", self, "_on_play")
 	
 	Game.connect("turn_started", self, "_on_turn_started")
+	Game.connect("wall_dead", self, "wall_destroy")
 	
 	_change_step_text("Get ready!")
 	
@@ -58,7 +59,7 @@ func _ready():
 		ItemDB.pickup_item("fish")
 		ItemDB.pickup_item("fish")
 		CardDB.pickup_card("falling thunder")
-		CardDB.pickup_card("clay wall")
+#		CardDB.pickup_card("clay wall")
 		Game.once = true
 	
 	add_drop("potion")
@@ -118,6 +119,10 @@ func add_wall(wall_id):
 	Game.wall_defense += wall.health
 	wall.connect("mouse_entered", self, "_on_target_mouse_entered", [wall])
 	wall.connect("mouse_exited", self, "_on_target_mouse_exited", [wall])
+
+func wall_destroy():
+	for wall in walls:
+		walls[wall].queue_free()
 
 func _change_step_text(text):
 	$lbl_step.text = text

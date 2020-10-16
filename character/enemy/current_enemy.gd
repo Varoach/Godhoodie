@@ -16,9 +16,6 @@ var _targets = { "attack" : Game.player, "heal" : self}
 
 #signal _on_turn()
 
-func _init():
-	pass
-
 func _ready():
 	_is_ready = true
 	healthbar.connect("dead", self, "_on_dead")
@@ -35,12 +32,15 @@ func _abilities():
 	return curr_ability
 
 func _damage_received(value):
-	if Game.wall_defense > value:
-		Game.wall_defense -= value
-		value = 0
-	elif Game.wall_defense >= Game.wall_defense:
-		value -= Game.wall_defense
-		Game.wall_defense = 0
+	if Game.wall_defense > 0:
+		if Game.wall_defense > value:
+			Game.wall_defense -= value
+			Game.emit_signal("wall_damage", value)
+			value = 0
+		elif Game.wall_defense >= Game.wall_defense:
+			value -= Game.wall_defense
+			Game.wall_defense = 0
+			Game.emit_signal("wall_dead")
 	if defense > value:
 		defense -= value
 		value = 0
