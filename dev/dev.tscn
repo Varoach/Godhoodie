@@ -1,0 +1,101 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/HELP.png" type="Texture" id=1]
+[ext_resource path="res://dev/dev.gd" type="Script" id=2]
+[ext_resource path="res://dev/item_tab.gd" type="Script" id=3]
+[ext_resource path="res://dev/dev_item.tscn" type="PackedScene" id=4]
+
+[node name="dev" type="Control"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureButton" type="TextureButton" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3628.0
+margin_bottom = -1960.0
+texture_normal = ExtResource( 1 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="dev_options" type="TabContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+margin_top = 200.0
+margin_right = -200.0
+margin_bottom = -200.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="weapon_tab" type="Tabs" parent="dev_options"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="item_tab" type="Tabs" parent="dev_options"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+script = ExtResource( 3 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="dev_options/item_tab"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="dev_options/item_tab/ScrollContainer"]
+margin_right = 3432.0
+margin_bottom = 1724.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="dev_options/item_tab/ScrollContainer/VBoxContainer"]
+margin_right = 3432.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 0, 400 )
+
+[node name="dev_item" parent="dev_options/item_tab/ScrollContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 400.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 400, 0 )
+
+[node name="dev_item2" parent="dev_options/item_tab/ScrollContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 404.0
+margin_right = 804.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 400, 0 )
+
+[node name="jutsu_tab" type="Tabs" parent="dev_options"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+[connection signal="pressed" from="TextureButton" to="." method="_on_TextureButton_pressed"]

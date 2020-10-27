@@ -13,6 +13,8 @@ var held = false
 var max_speed = 2000
 
 func _ready():
+	connect("mouse_entered", self, "_on_drop_mouse_entered")
+	connect("mouse_exited", self, "_on_drop_mouse_exited")
 	if random:
 		linear_velocity = Vector2(rand_range(-1000, 1000),rand_range(-2000, -500))
 
@@ -81,3 +83,11 @@ func _input_event(viewport, event, shape_idx):
 #	apply_central_impulse(-position.direction_to(body.position))
 #	yield(self,"body_exited")
 #	remove_collision_exception_with(body)
+
+
+func _on_drop_mouse_entered():
+	Input.set_default_cursor_shape(6)
+
+
+func _on_drop_mouse_exited():
+	Input.set_default_cursor_shape(0)

@@ -35,9 +35,6 @@ func final_value(card, value):
 	else:
 		return calculate_final_value(card, value)
 
-func test_value(card, value):
-	pass
-
 func final_text(card, text):
 	var final_text = card.texts[text]
 	for value in card.values:

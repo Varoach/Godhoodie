@@ -1,27 +1,21 @@
 extends Node
 
-const ENEMY_PATH = "res://character/enemy/"
-const IMAGE_PATH = "res://enemies/images/"
+var custom_enemy = load("res://character/enemy/enemy.tscn")
+const IMAGE_PATH = "res://assets/enemies/"
+const SCRIPT_PATH = "res://character/enemy/scripts/"
 
 const ENEMIES = {
-	"enemy1": {
-		"path" : ENEMY_PATH + "enemy1/enemy1.tscn",
+	"slime": {
+		"image" : IMAGE_PATH + "slime.png",
 		"health" : 5,
-		"abilities":{
-			"attack" : 2,
-			"heal" : 3
+		"drops" : {
+			"gel" : 100,
+			"raw" : 10
+		},
+		"values":{
+			"attack" : [2, 5],
 		}
 	},
-	"enemy2": {
-		"path": ENEMY_PATH + "enemy2/enemy2.tscn",
-		"health" : 8,
-		"abilities":{
-			"attack" : 4
-		},
-	},
-#	"error": {
-#		"icon": ICON_PATH + "error.png"
-#	}
 }
 
 func get_enemy(enemy_id):
@@ -29,4 +23,14 @@ func get_enemy(enemy_id):
 		return ENEMIES[enemy_id]
 
 func random_enemy():
-	return ENEMIES.keys()[randi() % ENEMIES.size()]
+	return enemy_setup(ENEMIES.keys()[randi() % ENEMIES.size()])
+
+func enemy_setup(enemy_id):
+	var enemy = custom_enemy.instance()
+	enemy.set_script(load(SCRIPT_PATH + enemy_id))
+	enemy.set_texture(load(get_enemy(enemy_id)["image"]))
+	enemy.set_meta("id", enemy_id)
+	enemy.values = get_enemy(enemy_id)["values"]
+	enemy.health = get_enemy(enemy_id)["health"]
+	enemy.set_max_health()
+	return enemy

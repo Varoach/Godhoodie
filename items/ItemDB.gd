@@ -14,56 +14,138 @@ const custom_trinket = preload("res://trinkets/trinket_script.tscn")
 const ICON_PATH = "res://assets/items/"
 
 const ITEMS = {
-	"potion": {
-		"name": "Potion",
+	"blue stone": {
+		"name": "Blue Stone",
 		"tags": [],
-		"desc": "Surprise in a bottle",
-		"icon": ICON_PATH + "potion.png",
-		"icon_rotate": ICON_PATH + "potion_rotate.png",
-		"size": Vector2(2,4),
-		"targets": "single",
+		"desc": "Blue Boy",
+		"icon": ICON_PATH + "blue_stone.png",
+		"size": Vector2(2,1),
+		"targets": "none",
 		"values":{
-			"heal" : 8
 		},
 		"bars":{
 		},
 	},
-	"fish": {
-		"name": "Fish",
+	"clay shards": {
+		"name": "Clay Shards",
 		"tags": [],
-		"desc": "It's just a fish",
-		"icon": ICON_PATH + "fish.png",
-		"icon_rotate": ICON_PATH + "fish_rotate.png",
-		"size": Vector2(2,5),
-		"targets": "single",
+		"desc": "clay blockies",
+		"icon": ICON_PATH + "clay_shards.png",
+		"size": Vector2(2,1),
+		"targets": "none",
 		"values":{
-			"heal" : 4
 		},
 		"bars":{
-		}
+		},
 	},
-	"kunai": {
-		"name": "Kunai",
+	"rough stone": {
+		"name": "Rough Stone",
 		"tags": [],
-		"desc": "Throw it at people and see what happens",
-		"icon": ICON_PATH + "kunai.png",
-		"icon_rotate": ICON_PATH + "kunai_rotate.png",
-		"size": Vector2(1,3),
-		"targets": "single",
+		"desc": "lil stone",
+		"icon": ICON_PATH + "rough_stone.png",
+		"size": Vector2(2,1),
+		"targets": "none",
 		"values":{
-			"attack" : 5
 		},
 		"bars":{
-			"stamina" : 1
-		}
+		},
+	},
+	"burn powder": {
+		"name": "Burn Powder",
+		"tags": [],
+		"desc": "Really just gunpowder",
+		"icon": ICON_PATH + "burn_powder.png",
+		"size": Vector2(2,1),
+		"targets": "none",
+		"values":{
+		},
+		"bars":{
+		},
+	},
+	"shimmering twig": {
+		"name": "Shimmering Twig",
+		"tags": [],
+		"desc": "shimmer twig",
+		"icon": ICON_PATH + "shimmering_twig.png",
+		"size": Vector2(2,1),
+		"targets": "none",
+		"values":{
+		},
+		"bars":{
+		},
+	},
+	"burn cream": {
+		"name": "Burn Cream",
+		"tags": [],
+		"desc": "Burn cream will remove 5 stacks of burn",
+		"icon": ICON_PATH + "burn_cream.png",
+		"size": Vector2(2,1),
+		"targets": "single",
+		"values":{
+			"unburn" : 5
+		},
+		"bars":{
+		},
+	},
+	"cool leaf": {
+		"name": "Cool Leaf",
+		"tags": ["base"],
+		"desc": "omg its a blue leaf",
+		"icon": ICON_PATH + "cool_leaf.png",
+		"size": Vector2(1,1),
+		"targets": "none",
+		"values":{
+			"heal" : 1
+		},
+		"bars":{
+		},
+	},
+	"focus potion": {
+		"name": "Focus Potion",
+		"tags": [],
+		"desc": "gimme that 2 focus",
+		"icon": ICON_PATH + "focus_potion.png",
+		"size": Vector2(1,2),
+		"targets": "player",
+		"values":{
+			"focus" : 2
+		},
+		"bars":{
+		},
+	},
+	"gel": {
+		"name": "Gel",
+		"tags": ["base"],
+		"desc": "gelly bois",
+		"icon": ICON_PATH + "gel.png",
+		"size": Vector2(1,1),
+		"targets": "none",
+		"values":{
+			"heal" : 1
+		},
+		"bars":{
+		},
+	},
+	"flask": {
+		"name": "The Flask",
+		"tags": ["relic", "container"],
+		"desc": "The beginning",
+		"icon": ICON_PATH + "flask.png",
+		"size": Vector2(2,3),
+		"targets": "player",
+		"values":{
+			"heal" : 1,
+			"stacks" : 1
+		},
+		"bars":{
+		},
 	},
 	"fools gold": {
 		"name": "Fool's Gold",
-		"tags": [],
+		"tags": ["relic"],
 		"ability": "fools_gold",
 		"desc": "This small golden rock has, for generations, been confused for gold, leading would be thieves to their doom. What is thought to be a lump of treasure, happens to be a thunderstone, capable of reducing those that make contact with it to ash. Hence it's name 'fools gold'.",
 		"icon": ICON_PATH + "fools_gold.png",
-		"icon_rotate": ICON_PATH + "fools_gold_rotate.png",
 		"size": Vector2(3,3),
 		"targets": "none",
 	},
@@ -75,7 +157,6 @@ const ITEMS = {
 		"tags": ["trinket"],
 		"desc": "Lock it and Sock-et",
 		"icon": ICON_PATH + "electric_rune.png",
-		"icon_rotate": ICON_PATH + "electric_rune_rotate.png",
 		"size": Vector2(2,2),
 		"targets": "none",
 	},
@@ -103,8 +184,10 @@ func item_setup(item_id):
 	item.tags = get_item(item_id)["tags"]
 	item.set_texture(load(get_item(item_id)["icon"]))
 	item.texture_original = load(get_item(item_id)["icon"])
-	item.texture_rotate = load(get_item(item_id)["icon_rotate"])
+	item.texture_rotate = load(get_item(item_id)["icon"].replace(".png", "_rotate.png"))
 	item.targets = get_item(item_id)["targets"]
+	if item.tags.has("container"):
+		item.add_to_group("container")
 	if get_item(item_id).has("anim_ready"):
 		item.anim_ready = get_item(item_id)["anim_ready"]
 	if get_item(item_id).has("anim_use"):
@@ -126,3 +209,5 @@ func trinket_setup(trinket_id):
 	trinket.texture = load(get_item(trinket_id)["icon"])
 	trinket.buffs = get_item(trinket_id)["buffs"]
 	return trinket
+
+

@@ -6,8 +6,9 @@ var item_enemies_ref = funcref(self, "enemies_item")
 var item_everyone_ref = funcref(self, "everyone_item")
 var item_random_ref = funcref(self, "random_item")
 var item_first_ref = funcref(self, "first_item")
+var item_player_ref = funcref(self, "player_item")
 
-var item_use_case = {"test" : item_test_ref, "single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref}
+var item_use_case = {"test" : item_test_ref, "single" : item_single_ref, "enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "first" : item_first_ref, "player" : item_player_ref}
 
 func get_item_use(case, use):
 	if use in case:
@@ -15,16 +16,31 @@ func get_item_use(case, use):
 	else:
 		return null
 
+func player_item(item, target = null):
+	apply_item(item, Game.player)
+
 func apply_item(item, target):
+	var text_value = ""
 	for value in item.values:
 		var temp_value = item.values[value]
 		if Game.temp_buffs.has(value):
 			temp_value *= Game.temp_buffs[value]
-#			print(temp_value)
-#			print(Game.temp_buffs)
+	#			print(temp_value)
+	#			print(Game.temp_buffs)
+		if item.is_in_group("container"):
+			temp_value *= item.stacks
 		if target != null:
-			target.use(value, temp_value)
+			if item.is_in_group("bomb"):
+				for trigger in item.triggers:
+					target.use_bomb(value, trigger, temp_value)
+			else:
+				target.use(value, temp_value)
+			if Game.has_signal(value):
+				Game.emit_signal(value)
 			target.play_effect(item.title)
+			if value != "cost":
+				text_value = text_value + "\n" + String(temp_value) + " applied to " + target.name
+	Game.emit_signal("step_text", text_value)
 
 func enemies_item(item, target = null):
 	for target in Game.enemy_targets:

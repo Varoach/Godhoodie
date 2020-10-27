@@ -8,15 +8,18 @@ func check_health():
 
 func negative_health_update(health_change):
 	value -= health_change
+	$value.text = String(value)
 	check_health()
 
 func positive_health_update(health_change):
 	value += health_change
+	$value.text = String(value)
 	check_health()
 
 func set_health(max_health):
 	max_value = max_health
 	value = max_health
+	$value.text = String(max_health)
 
 func can_heal():
 	if value == max_value:

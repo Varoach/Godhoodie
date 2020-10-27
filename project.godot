@@ -91,7 +91,7 @@ turn_right={
 
 [physics]
 
-2d/default_gravity_vector=Vector2( 0, 20 )
+2d/default_gravity_vector=Vector2( 0, 40 )
 
 [rendering]
 

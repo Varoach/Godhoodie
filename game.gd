@@ -10,10 +10,12 @@ const STEP_WAIT_TIME = 0.5
 signal turn_started()
 signal player_check()
 signal player_end()
+signal enemy_end()
 signal lightning()
 signal update_cards()
 signal wall_damage(value)
 signal wall_dead()
+signal step_text()
 
 var targets = []
 var items = []
@@ -28,7 +30,7 @@ var player
 var tacos = false
 var highlight = false
 var once = false
-var bars = {"health" : 9, "focus" : 8, "stamina" : 5, "strength" : 0, "speed" : 2, "perception" : 0}
+var bars = {"health" : 12, "focus" : 8, "stamina" : 5, "strength" : 0, "speed" : 2, "perception" : 0}
 var curr_bars = {}
 var bar_press = {"focus" : 0, "stamina" : 0}
 var curr_bar_press = {}
@@ -78,8 +80,8 @@ func _on_stepper_timeout():
 	#print("current step: " + String(_current_step))
 
 func enemy_use(ability, target, value):
-	if walls.empty():
-		target.use(ability, value)
+	target.use(ability, value)
+	Game.emit_signal("step_text", String(value) + " applied to " + target.name)
 
 func item_use(item, handy, curr_target = null):
 	var curr_attacks = 1

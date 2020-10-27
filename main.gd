@@ -14,6 +14,7 @@ func _ready():
 
 func change_screen(screen_name):
 	if !_screens.has(screen_name): return
+	Game.return_state()
 	
 	for child in $screen_layer.get_children():
 		$screen_layer.remove_child(child)

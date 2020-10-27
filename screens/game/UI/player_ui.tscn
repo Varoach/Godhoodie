@@ -17,6 +17,7 @@ font_data = ExtResource( 7 )
 
 [node name="playerui" type="Control"]
 margin_right = 265.0
+rect_scale = Vector2( 0.8, 0.8 )
 script = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false

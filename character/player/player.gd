@@ -33,14 +33,15 @@ func add_defense():
 	$character/defense.text = String(defense)
 
 func _damage_received(value):
-	if Game.wall_defense > value:
-		Game.wall_defense -= value
-		Game.emit_signal("wall_damage", value)
-		value = 0
-	elif Game.wall_defense >= Game.wall_defense:
-		value -= Game.wall_defense
-		Game.wall_defense = 0
-		Game.emit_signal("wall_dead")
+	if Game.wall_defense > 0:
+		if Game.wall_defense > value:
+			Game.wall_defense -= value
+			Game.emit_signal("wall_damage", value)
+			value = 0
+		elif Game.wall_defense >= Game.wall_defense:
+			value -= Game.wall_defense
+			Game.wall_defense = 0
+			Game.emit_signal("wall_dead")
 	if defense > value:
 		defense -= value
 		value = 0
@@ -59,6 +60,13 @@ func _healing_received(value):
 #	$animations.play("defend")
 	positive_health_update(value)
 	heart_check()
+
+func _focus_received(value):
+	if Game.curr_bars.focus + value > Game.bars.focus:
+		Game.curr_bars.focus = Game.bars.focus
+	else:
+		Game.curr_bars.focus += value
+	focus_check()
 
 func heart_check():
 	emit_signal("check")
@@ -83,6 +91,8 @@ func positive_health_update(value):
 
 func negative_health_update(value):
 	Game.curr_bars.health -= value
+	if Game.curr_bars.health <= 0:
+		emit_signal("dead")
 
 #func reset():
 #	ui.staminas.reset()

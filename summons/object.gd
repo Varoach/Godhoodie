@@ -12,6 +12,7 @@ func _ready():
 	Game.connect("wall_dead", self, "_on_dead")
 	healthbar.connect("dead", self, "_on_dead")
 	healthbar.set_position(Vector2(healthbar.rect_position.x, $mouse_area.rect_position.y) + hpOffset * ($appearance.scale.y*1.5))
+	healthbar.set_health(health)
 
 func set_texture(texture):
 	$appearance.texture = texture

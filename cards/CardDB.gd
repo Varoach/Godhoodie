@@ -87,7 +87,6 @@ const CARDS = {
 		"picture": "sword"
 	  },
 	  "values": {
-		"cost": 2,
 		"attack": 3,
 		"vulnerable": 1
 	  },
@@ -111,7 +110,6 @@ const CARDS = {
 		"picture": "lightning"
 	  },
 	  "values": {
-		"cost": 2,
 		"lightning": 3,
 	  },
 	  "bars":{
@@ -119,6 +117,28 @@ const CARDS = {
 	  },
 	  "texts": {
 		"name": "Falling Thunder",
+		"type": "attack",
+		"desc": "[center]Deal [color=#" + lightning_color + "]$lightning[/color] [b][color=#ffe270]$element[/color][/b]damage\nto [color=#2c68a0]$targets[/color]"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
+	  }
+	},
+	"fire": {
+	  "category": "fighter",
+	  "element" : "fire",
+	  "type": "attack",
+	  "tags": [],
+	  "targets": "enemies",
+	  "images": {
+		"background": "consumables",
+		"picture": "lightning"
+	  },
+	  "values": {
+		"fire": 3,
+	  },
+	  "bars":{
+		"focus": 2
+	  },
+	  "texts": {
+		"name": "Fire",
 		"type": "attack",
 		"desc": "[center]Deal [color=#" + lightning_color + "]$lightning[/color] [b][color=#ffe270]$element[/color][/b]damage\nto [color=#2c68a0]$targets[/color]"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
 	  }
@@ -141,6 +161,29 @@ const CARDS = {
 	  },
 	  "texts": {
 		"name": "Clay Wall",
+		"type": "summon",
+		"desc": "[center]Summon [b][color=#" + earth_color + "]$element[/color][/b] wall at target location"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
+	  }
+	},
+	"bomb": {
+	  "category": "fighter",
+	  "element" : "earth",
+	  "type": "bomb",
+	  "tags": [],
+	  "targets": "single",
+	  "triggers" : ["fire"],
+	  "images": {
+		"background": "consumables",
+		"picture": "clay-wall",
+	  },
+	  "values": {
+		"attack": 3,
+	  },
+	  "bars":{
+		"focus": 2
+	  },
+	  "texts": {
+		"name": "Bomb",
 		"type": "summon",
 		"desc": "[center]Summon [b][color=#" + earth_color + "]$element[/color][/b] wall at target location"#\nApply [color=#a02c2c]$vulnerable[/color] vulnerable[/center]
 	  }
@@ -181,10 +224,14 @@ func card_setup(card_id):
 	card.type = get_card(card_id)["type"]
 	if card.type == "summon":
 		card.add_to_group("summon")
+	if card.type == "bomb":
+		card.add_to_group("bomb")
 	card.targets = get_card(card_id)["targets"]
 	card.bars = get_card(card_id)["bars"]
 	card.texts = get_card(card_id)["texts"]
 	card.images = get_card(card_id)["images"]
+	if get_card(card_id).has("triggers"):
+		card.triggers = get_card(card_id)["triggers"]
 	if get_card(card_id).has("anim_ready"):
 		card.anim_ready = get_card(card_id)["anim_ready"]
 	if get_card(card_id).has("anim_use"):

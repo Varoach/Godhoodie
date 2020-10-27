@@ -1,8 +1,5 @@
 extends "res://character/character.gd"
 
-var Character = preload("res://character/character.gd")
-var character_node = Character.new()
-
 const FORMAT_LABEL = "lbl_%s"
 const FORMAT_IMAGE = "img_%s"
 
@@ -12,9 +9,9 @@ var _is_ready = false
 onready var healthbar = get_node("character/healthbar")
 
 var abilities = {}
+var values = {}
+var drops = {}
 var _targets = { "attack" : Game.player, "heal" : self}
-
-#signal _on_turn()
 
 func _ready():
 	_is_ready = true
@@ -22,7 +19,7 @@ func _ready():
 	healthbar.set_position(Vector2(healthbar.rect_position.x, $mouse_area.rect_position.y) + hpOffset * ($character/appearance.scale.y*1.5))
 
 func _abilities():
-	var curr_ability = abilities.duplicate()
+	var curr_ability = values.duplicate()
 	if not $character/healthbar.can_heal():
 		curr_ability.erase("heal")
 	while curr_ability.size() > 1:
@@ -52,7 +49,6 @@ func _damage_received(value):
 #		$animations.play("defend")
 		return
 #	$animations.play("damage")
-#	$animations.play("damage")
 	healthbar.negative_health_update(value)
 
 func _healing_received(value):
@@ -62,6 +58,9 @@ func _healing_received(value):
 func play_turn():
 	Game._stepper.start()
 	cast(_abilities())
+
+func set_max_health():
+	$character/healthbar.set_health(health)
 
 func cast(ability):
 	var target
@@ -75,9 +74,8 @@ func cast(ability):
 	Game.enemy_use(type, target, ability.values()[0])
 #	$animations.play("attack")
 
-func enemy_setup(enemy_id):
-	var single_enemy = load(EnemyDB.get_enemy(enemy_id)["path"])
-	var enemy = single_enemy.instance()
-	enemy.set_meta("id", enemy_id)
-	enemy.abilities = EnemyDB.get_enemy(enemy_id)["abilities"]
-	return enemy
+func set_texture(image):
+	var sprite_frame = SpriteFrames.new()
+	sprite_frame.add_animation("default")
+	sprite_frame.add_frame("default", image)
+	$character/appearance.frames = sprite_frame

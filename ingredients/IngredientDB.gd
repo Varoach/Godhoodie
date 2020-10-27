@@ -1,7 +1,12 @@
 extends Node
 
+# example:
+# mixed item : {combined item : made item, combined item : made item, ....}
+
 const RECIPES = {
-	"fish" : {"fish" : "potion"}
+	"fish" : {"fish" : "potion"},
+	"cool leaf" : {"gel" : "burn cream"},
+	"gel" : {"cool leaf" : "burn cream"},
 }
 
 func craft(item, held):

@@ -17,6 +17,7 @@ var category = "" # Specifies the card's category
 var element  = "" # Specifies the card's elements
 var type     = "" # Specifies the card's type
 var tags     = [] # Lists additional specifiers for the card
+var triggers = []
 var targets  = "" # Specifies the card's targets
 var images   = {} # Lists the different image used to represent this card
 var values   = {} # Lists the different numerical values for this card

@@ -364,7 +364,7 @@ func release(cursor_pos):
 	item_held.reset_z_index()
 	var c = get_container_under_cursor(cursor_pos)
 	if c == null:
-		if !item_held.values.empty():
+		if !item_held.values.empty() and !item_held.is_empty():
 			emit_signal("play", item_held, item_held.targets, name, item_held.bars)
 		elif !last_available_pos.empty():
 			insert_item_at_last_available_spot(item_held, last_available_pos)
@@ -469,8 +469,11 @@ func spot_check(x,y):
 	return false
 
 func _on_item_played(item, status):
-	if status:
+	if status and !item.tags.has("container"):
 		drop_item()
+	elif status and item.tags.has("container"):
+		return_item()
+		Game.player.animation("default")
 	elif not status and distance_check():
 		insert_item_at_last_available_spot(item_held, last_available_pos)
 		item_held = null
@@ -478,6 +481,8 @@ func _on_item_played(item, status):
 	else:
 		return_item()
 		Game.player.animation("default")
+	if item.tags.has("container"):
+			item.stacks = 0
 
 func distance_check():
 	if item_held == null or last_available_pos.empty():

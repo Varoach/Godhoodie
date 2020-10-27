@@ -22,6 +22,7 @@ var rotated = false
 var flipped = false
 var ready = false
 var buffs = {}
+var stacks = 0
 onready var image = get_node("Image")
 
 var _animation = Tween.new()
@@ -54,6 +55,8 @@ func _init():
 	add_child(_animation)
 
 func _ready():
+	if tags.has("container"):
+		stacks = values.stacks
 	connect("shake", self, "_on_shake")
 	$Image.connect("mouse_entered", self, "_on_mouse_area_entered")
 	$Image.connect("mouse_exited", self, "_on_mouse_area_exited")
@@ -320,3 +323,11 @@ func _on_stop_shake():
 
 func _on_animation_finished(shake):
 	emit_signal("shake_done")
+
+func is_empty():
+	if self.is_in_group("container"):
+		if stacks == 0:
+			return true
+		return false
+	else:
+		return false

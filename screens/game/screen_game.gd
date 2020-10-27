@@ -11,11 +11,7 @@ var _player_characters = {
 
 var _enemies = load("res://character/enemy/current_enemy.gd").new()
 
-#var weapon_ref = funcref(Game, "weapon_use")
-#var item_ref = funcref(Game, "item_use")
-#var jutsu_ref = funcref(Game, "jutsu_use")
-#
-#var hand_use = {"weapons" : weapon_ref, "items" : item_ref, "jutsus" : jutsu_ref}
+var dev_panel = load("res://dev/dev.tscn")
 
 var targets = []
 var walls = []
@@ -25,6 +21,7 @@ var wall_targets = []
 var enemy_positions = []
 var enemy_position = Vector2(0,0)
 var possible_enemy_positions = []
+export var status_offset = Vector2(-250, 25)
 
 var _focused_target = null
 
@@ -39,6 +36,7 @@ func _ready():
 	$Inventory.connect("play", self, "_on_play")
 	
 	Game.connect("turn_started", self, "_on_turn_started")
+	Game.connect("step_text", self, "_change_step_text")
 	Game.connect("wall_dead", self, "wall_destroy")
 	
 	_change_step_text("Get ready!")
@@ -49,29 +47,27 @@ func _ready():
 	if !Game.once:
 		WeaponDB.pickup_weapon("daggers")
 		WeaponDB.pickup_weapon("wood sword")
-		ItemDB.pickup_item("potion")
-		ItemDB.pickup_item("potion")
-		ItemDB.pickup_item("fools gold")
-		ItemDB.pickup_item("electric rune")
-		ItemDB.pickup_item("electric rune")
-		ItemDB.pickup_item("electric rune")
-		ItemDB.pickup_item("kunai")
-		ItemDB.pickup_item("fish")
-		ItemDB.pickup_item("fish")
-		CardDB.pickup_card("falling thunder")
+#		ItemDB.pickup_item("potion")
+#		ItemDB.pickup_item("potion")
+#		ItemDB.pickup_item("fools gold")
+#		ItemDB.pickup_item("electric rune")
+#		ItemDB.pickup_item("electric rune")
+		ItemDB.pickup_item("flask")
+		ItemDB.pickup_item("focus potion")
+#		ItemDB.pickup_item("kunai")
+#		ItemDB.pickup_item("fish")
+#		ItemDB.pickup_item("fish")
+		ItemDB.pickup_item("cool leaf")
+		ItemDB.pickup_item("gel")
+		ItemDB.pickup_item("cool leaf")
+		ItemDB.pickup_item("gel")
+		ItemDB.pickup_item("cool leaf")
+		ItemDB.pickup_item("gel")
+#		CardDB.pickup_card("falling thunder")
+		CardDB.pickup_card("fire")
 #		CardDB.pickup_card("clay wall")
+		CardDB.pickup_card("bomb")
 		Game.once = true
-	
-	add_drop("potion")
-	add_drop("potion")
-	add_drop("potion")
-	add_drop("fools gold")
-	add_drop("electric rune")
-	add_drop("potion")
-	add_drop("potion")
-	add_drop("potion")
-	add_drop("fools gold")
-	add_drop("electric rune")
 
 func move_update():
 	$TurnCon/TurnButton/Label.text = String(Game.moves)
@@ -101,12 +97,16 @@ func add_targets():
 		targets.append(child)
 		child.connect("mouse_entered", self, "_on_target_mouse_entered", [child])
 		child.connect("mouse_exited", self, "_on_target_mouse_exited", [child])
+		child.connect("dead", self, "_game_over")
+		child.set_status_location($player_position.rect_global_position + status_offset)
 	for child in $enemy_position.get_children():
 		child.position.x = enemy_position.x
 		targets.append(child)
 		enemy_targets.append(child)
 		child.connect("mouse_entered", self, "_on_target_mouse_entered", [child])
 		child.connect("mouse_exited", self, "_on_target_mouse_exited", [child])
+		child.connect("dead", self, "_dead_enemy")
+		child.set_status_location($enemy_position.rect_global_position + status_offset)
 		Game._steps.append("enemy_turn")
 	Game.targets = targets
 	Game.enemy_targets = enemy_targets
@@ -119,10 +119,6 @@ func add_wall(wall_id):
 	Game.wall_defense += wall.health
 	wall.connect("mouse_entered", self, "_on_target_mouse_entered", [wall])
 	wall.connect("mouse_exited", self, "_on_target_mouse_exited", [wall])
-
-func wall_destroy():
-	for wall in walls:
-		walls[wall].queue_free()
 
 func _change_step_text(text):
 	$lbl_step.text = text
@@ -165,6 +161,7 @@ func end_turn():
 	if $Inventory.played:
 		return
 	$Inventory.played = true
+	Game.player.emit_signal("tick_time")
 	Game.emit_signal("player_end")
 	Game.temp_buffs.clear()
 	Game.emit_signal("update_cards")
@@ -175,6 +172,8 @@ func end_turn():
 	for child in $enemy_position.get_children():
 		child.play_turn()
 		yield(Game._stepper,"timeout")
+		child.emit_signal("tick_time")
+	Game.emit_signal("enemy_end")
 	_change_step_text("Your turn")
 	Game.moves = Game.bars.speed
 	move_update()
@@ -211,7 +210,7 @@ func add_drop(drop_name, spot = null):
 	drop.category = info.category
 	drop.title = info.title
 	if spot != null:
-		drop.global_position = spot
+		$worldspace/drops.global_position = spot
 	$worldspace/drops.add_child(drop)
 	$worldspace/drops.pickable_set()
 	for node in get_tree().get_nodes_in_group("pickable"):
@@ -222,8 +221,21 @@ func add_drop(drop_name, spot = null):
 
 func win():
 	yield(get_tree(), "idle_frame")
-	get_tree().reload_current_scene()
+	Game.return_state()
+	emit_signal("next_screen", "menu")
 
-func game_over():
+func _dead_enemy(enemy):
+	add_drop("electric rune", enemy.global_position)
+	add_drop("potion", enemy.global_position)
+	$enemy_position.remove_child(enemy)
+	enemy.queue_free()
+
+func _game_over():
+#	add_drop("electric rune", $enemy_position.get_child(0).position)
 	yield(get_tree(), "idle_frame")
-	get_tree().reload_current_scene()
+	Game.return_state()
+	emit_signal("next_screen", "menu")
+
+
+func _on_TextureButton_pressed():
+	add_child(dev_panel.instance())
