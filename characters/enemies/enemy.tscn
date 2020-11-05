@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://characters/character.tscn" type="PackedScene" id=1]
+[ext_resource path="res://characters/enemies/enemy.gd" type="Script" id=2]
+
+[node name="character" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="mouse_area" parent="." index="1"]
+grow_horizontal = 2
+grow_vertical = 2
+rect_pivot_offset = Vector2( 535, 292 )
+
+[node name="ui" type="Control" parent="." index="2"]
+rect_scale = Vector2( -1, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hearts" type="CenterContainer" parent="ui" index="0"]
+use_top_left = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="container" type="HBoxContainer" parent="ui/hearts" index="0"]
+alignment = 1
+
+[node name="balances" type="CenterContainer" parent="ui" index="1"]
+use_top_left = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="container" type="HBoxContainer" parent="ui/balances" index="0"]
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
