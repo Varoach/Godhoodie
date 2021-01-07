@@ -4,16 +4,26 @@ var max_health
 var health
 var attack
 var sleep = 0
+var balance = 0
+var before_balance = 0
 var dead = false
 
 signal dead()
-signal cut_received()
-signal freeze_received()
-signal fire_received()
+signal cut_received(value)
+signal freeze_received(value)
+signal fire_received(value)
 signal damage_received(value)
-signal healing_received(value)
+signal heal_received(value)
+signal ice_received(value)
+signal water_received(value)
+signal sand_received(value)
 
 export var health_offset = 160
+
+var _animation = Tween.new()
+
+func _init():
+	add_child(_animation)
 
 func sprite_set(image, offset_y = 0 , size_diff = 1):
 	$sprite.texture = image
@@ -26,16 +36,19 @@ func sprite_set(image, offset_y = 0 , size_diff = 1):
 func flip():
 	$sprite.flip_h = !$sprite.flip_h
 
-func check_dead():
-	if health <= 0:
-		emit_signal("dead")
-		dead = true
-
-func use(value_name, value):
+func use(value_name, value, item = null):
+	if item:
+		ItemUse.last_item = item
 	if value_name == "attack":
-		emit_signal("damage_received", value)
-	if value_name == "heal":
-		emit_signal("healing_received", value)
+		emit_signal("damage_received", value, item)
+	else:
+		emit_signal(value_name + "_received", value, item)
 
 func play_animation(animation):
 	$animator.play(animation)
+
+func bring_front():
+	get_parent().z_index = 10
+
+func send_back():
+	get_parent().z_index = 0

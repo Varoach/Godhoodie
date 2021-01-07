@@ -25,6 +25,8 @@ Game="*res://game.gd"
 ItemUse="*res://item_use.gd"
 EnemyDB="*res://databases/EnemyDB.gd"
 ItemDB="*res://databases/ItemDB.gd"
+RecipeDB="*res://databases/RecipeDB.gd"
+RelicDB="*res://databases/RelicDB.gd"
 
 [display]
 

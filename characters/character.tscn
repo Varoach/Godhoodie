@@ -3,7 +3,7 @@
 [ext_resource path="res://characters/character.gd" type="Script" id=1]
 [ext_resource path="res://assets/character/enemies/slime/slime.png" type="Texture" id=2]
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=1]
 resource_name = "attack"
 length = 0.5
 tracks/0/type = "value"
@@ -19,8 +19,7 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( -158.165, 0 ), Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=1]
-resource_name = "damage"
+[sub_resource type="Animation" id=2]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:position")
@@ -35,8 +34,7 @@ tracks/0/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( 36.8654, -20.2165 ), Vector2( -33.2978, -23.7841 ), Vector2( 47.5683, 41.6223 ), Vector2( -48.7575, 7.13528 ), Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=2]
-resource_name = "heal"
+[sub_resource type="Animation" id=3]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:position")
@@ -67,6 +65,6 @@ __meta__ = {
 }
 
 [node name="animator" type="AnimationPlayer" parent="."]
-anims/attack = SubResource( 3 )
-anims/damage = SubResource( 1 )
-anims/heal = SubResource( 2 )
+anims/attack = SubResource( 1 )
+anims/damage = SubResource( 2 )
+anims/heal = SubResource( 3 )

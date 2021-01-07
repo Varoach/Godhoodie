@@ -1,13 +1,11 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[ext_resource path="res://assets/fonts/Roboto-Bold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/fonts/PatrickHand-Regular.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 256
-outline_size = 20
+size = 200
+outline_size = 12
 outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
 use_filter = true
-extra_spacing_top = -50
-extra_spacing_bottom = -58
 font_data = ExtResource( 1 )

@@ -5,9 +5,11 @@ signal spawn_item(item, position)
 const custom_item = preload("res://items/custom_item.tscn")
 
 const IMAGE_PATH = "res://assets/items/"
+const SCRIPT_PATH = "res://items/scripts/"
 
 var cell_size = 101.05
 var rect_scale
+var bases = []
 
 const ITEMS = {
 	"blue stone": {
@@ -87,7 +89,7 @@ const ITEMS = {
 	"focus potion": {
 		"name": "Focus Potion",
 		"tags": [],
-		"desc": "gimme that 2 focus.",
+		"desc": "Gimme that 2 focus.",
 		"size": Vector2(1,2),
 		"targets": "player",
 		"values":
@@ -103,9 +105,11 @@ const ITEMS = {
 		"desc": "The beginning.",
 		"size": Vector2(2,3),
 		"targets": "player",
-		"values":{
-			"heal" : 1,
+		"stats":{
 			"stacks" : 1
+		},
+		"values":{
+			"heal" : 1
 		},
 		"labels":
 			{
@@ -156,13 +160,73 @@ const ITEMS = {
 	},
 	"rusty dagger": {
 		"name": "Rusty Dagger",
-		"tags": ["weapon", "cut"],
+		"tags": ["weapon"],
 		"desc": "Stabby stab stab.",
 		"size": Vector2(4,2),
 		"targets": "enemy",
+		"cost": {
+			"energy" : 1,
+		},
 		"values":
 			{
-				"attack" : 2,
+				"cut" : 1,
+			}
+	},
+	"ice spear": {
+		"name": "Ice Spear",
+		"tags": ["weapon"],
+		"desc": "Stabby stab stab.",
+		"size": Vector2(6,2),
+		"targets": "enemy",
+		"cost": {
+			"energy" : 2,
+		},
+		"values":
+			{
+				"cut" : 3,
+				"ice" : 1
+			}
+	},
+		"lady lucks comb": {
+		"name": "Lady Luck's Comb",
+		"tags": ["relic"],
+		"desc": "Comby comb comb.",
+		"size": Vector2(2,2),
+	},
+		"travelers cane": {
+		"name": "Traveler's Cane",
+		"tags": ["relic"],
+		"desc": "Walky walk walk.",
+		"size": Vector2(2,6),
+	},
+	"dune walker blade": {
+		"name": "Dune Walker Blade",
+		"tags": ["weapon"],
+		"desc": "Stabby stab stab.",
+		"size": Vector2(5,2),
+		"targets": "enemy",
+		"script": true,
+		"cost": {
+			"energy" : 2,
+		},
+		"values":
+			{
+				"sand" : 2,
+			}
+	},
+	"sand trapper": {
+		"name": "Sand Trapper",
+		"tags": ["weapon"],
+		"desc": "Shooty shoot shoot.",
+		"size": Vector2(5,2),
+		"targets": "enemy",
+		"script": true,
+		"cost": {
+			"energy" : 2,
+		},
+		"values":
+			{
+				"sand" : 1,
 			}
 	},
 	"gel": {
@@ -211,8 +275,23 @@ const ITEMS = {
 	}
 }
 
-func spawn_item(item_id, position):
-	var item = item_setup(item_id)
+func _ready():
+	for item in ITEMS:
+		if get_item(item).has("tags"):
+			if get_item(item)["tags"].has("base"):
+				bases.append(item)
+	print(bases)
+
+func spawn_item(item_id, position, random = true, grow = false):
+	var item
+	if item_id == "random":
+		pass
+	elif item_id == "random base":
+		item = item_setup(bases[randi() % bases.size()])
+	else:
+		item = item_setup(item_id)
+	item.random = random
+	item.grow = grow
 	emit_signal("spawn_item", item, position)
 	for node in get_tree().get_nodes_in_group("items"):
 		item.add_collision_exception_with(node)
@@ -234,15 +313,32 @@ func get_image_back(item_id):
 	var new_id = item_id.replacen(" ", "_")
 	return load(IMAGE_PATH + new_id + "_back.png")
 
+func script_set(item_id, item):
+	var new_id = item_id.replacen(" ", "_")
+	item.set_script(load(SCRIPT_PATH + new_id + ".gd"))
+
 func item_setup(item_id):
 	var item = custom_item.instance()
+	if get_item(item_id).has("script"):
+		if get_item(item_id)["script"]:
+			script_set(item_id, item)
 	item.title = get_item(item_id)["name"]
+	item.real_title = item_id.replacen(" ", "_")
 	item.tags = get_item(item_id)["tags"]
 	item.desc = get_item(item_id)["desc"]
 	item.size = get_item(item_id)["size"]
-	item.targets = get_item(item_id)["targets"]
+	if get_item(item_id).has("targets"):
+		item.targets = get_item(item_id)["targets"]
+	if get_item(item_id).has("type"):
+		item.stats = get_item(item_id)["type"]
+	if get_item(item_id).has("cost"):
+		item.stats = get_item(item_id)["cost"]
+	if get_item(item_id).has("stats"):
+		item.stats = get_item(item_id)["stats"]
 	if get_item(item_id).has("values"):
 		item.values = get_item(item_id)["values"]
+	if get_item(item_id).has("damage"):
+		item.damage = get_item(item_id)["damage"]
 	if get_item(item_id).has("ticks"):
 		item.values = get_item(item_id)["ticks"]
 	if get_item(item_id).has("buffs"):

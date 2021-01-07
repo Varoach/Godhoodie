@@ -1,5 +1,7 @@
 extends Node
 
+var last_item = null
+
 var item_enemies_ref = funcref(self, "enemies_item")
 var item_everyone_ref = funcref(self, "everyone_item")
 var item_random_ref = funcref(self, "random_item")
@@ -7,6 +9,12 @@ var item_enemy_ref = funcref(self, "enemy_item")
 var item_player_ref = funcref(self, "player_item")
 
 var item_use_case = {"enemies" : item_enemies_ref, "everyone" : item_everyone_ref, "random" : item_random_ref, "enemy" : item_enemy_ref, "player" : item_player_ref}
+
+func test_item(item):
+	for cost in item.cost:
+		if Game.values[cost] < item.cost[cost]:
+			return false
+	return true
 
 func get_item_use(use):
 	if use in item_use_case:
@@ -19,16 +27,34 @@ func player_item(item):
 
 func apply_item(item, target):
 	if item.tags.has("weapon") or item.tags.has("jutsu"):
-		Game.clock -= 1
+		if Game.values.energy == 0:
+			print("energy false")
+			return false
+		if !test_item(item):
+			print("cost false")
+			return false
+		if !item.cost.empty():
+			for cost in item.cost:
+				Game.values[cost] -= item.cost[cost]
+		else:
+			Game.values.energy -= 1
 		Game.emit_signal("player_played")
 	for value in item.values:
-		target.use(value, item.values[value])
-		if item.tags.has("cut"):
-			target.emit_signal("cut_received", value)
+		var temp_value = item.values[value]
+		if item.tags.has("container"):
+			if item.stats.stacks == 0:
+				return false
+			temp_value *= item.stats.stacks
+		target.use(value, temp_value, item)
+
+	if item.tags.has("container"):
+		item.stats.stacks = 0
+		item.set_labels()
 	if item.tags.has("weapon") or item.tags.has("container") or item.tags.has("jutsu"):
-		return
+		return true
 	else:
 		item.emit_signal("remove_item", item)
+	return true
 
 func enemy_item(item):
 	var first_enemy

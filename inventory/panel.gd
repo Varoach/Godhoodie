@@ -32,23 +32,28 @@ func _ready():
 			grid[x][y] = {}
 			grid[x][y]["carrying"] = false
 			grid[x][y]["available"] = true
-			grid[x][y]["infected"] = false
 	_add_dots()
 	ItemDB.connect("spawn_item", self, "_on_item_spawn")
-	ItemDB.spawn_item("kunai", Vector2(500, 500))
-	ItemDB.spawn_item("flask", Vector2(500, 500))
-	ItemDB.spawn_item("kunai", Vector2(500, 500))
-	ItemDB.spawn_item("kunai", Vector2(500, 500))
-	ItemDB.spawn_item("liquid ambrosia", Vector2(500, 500))
-	ItemDB.spawn_item("rusty dagger", Vector2(500, 500))
-	ItemDB.spawn_item("gel", Vector2(500, 500))
-	ItemDB.spawn_item("fine ash", Vector2(500, 500))
-	ItemDB.spawn_item("blue safflina", Vector2(500, 500))
-	ItemDB.spawn_item("weapon cleaning oil", Vector2(500, 500))
+#	ItemDB.spawn_item("kunai", Vector2(500, 500))
+#	ItemDB.spawn_item("flask", Vector2(500, 500))
+#	ItemDB.spawn_item("kunai", Vector2(500, 500))
+#	ItemDB.spawn_item("kunai", Vector2(500, 500))
+#	ItemDB.spawn_item("liquid ambrosia", Vector2(500, 500))
+#	ItemDB.spawn_item("rusty dagger", Vector2(500, 500))
+#	ItemDB.spawn_item("gel", Vector2(500, 500))
+#	ItemDB.spawn_item("fine ash", Vector2(500, 500))
+#	ItemDB.spawn_item("blue safflina", Vector2(500, 500))
+#	ItemDB.spawn_item("weapon cleaning oil", Vector2(500, 500))
+#	ItemDB.spawn_item("ice spear", Vector2(500, 500))
+	ItemDB.spawn_item("dune walker blade", Vector2(500, 500))
+	ItemDB.spawn_item("sand trapper", Vector2(500, 500))
+	ItemDB.spawn_item("travelers cane", Vector2(500, 500))
+	ItemDB.spawn_item("lady lucks comb", Vector2(500, 500))
 
 func _process(_delta):
 	var cursor_pos = get_global_mouse_position()
 	if Input.is_action_just_pressed("grab"):
+		item_pressed(cursor_pos)
 		last_cursor_pos = cursor_pos
 	if last_cursor_pos != null:
 		if last_cursor_pos.distance_to(cursor_pos) > 10:
@@ -56,17 +61,24 @@ func _process(_delta):
 			last_cursor_pos = null
 	if Input.is_action_just_released("grab"):
 		release(cursor_pos)
+		Game.item_pressed = null
 		last_cursor_pos = null
 	if Game.item_held != null:
-		Game.item_held.global_position = cursor_pos - Game.item_held.get_full_size() / 2
+		Game.item_held.global_position = cursor_pos
 		can_insert(Game.item_held)
+	if Game.item_held:
 		if !_animation.is_active():
 			if !$dots.visible:
 				enable_dots()
-	elif !Game.item_held:
+	else:
 		if !_animation.is_active():
 			if $dots.visible:
 				disable_dots()
+
+func item_pressed(cursor_pos):
+	var c = get_container_under_cursor(cursor_pos)
+	if c != null and c.has_method("get_item"):
+		Game.item_pressed = c.get_item(cursor_pos)
 
 func disable_dots():
 	_animation.interpolate_property($dots, "modulate:a", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_OUT)
@@ -93,9 +105,16 @@ func _add_dots():
 
 func _on_item_spawn(item, location):
 	item.connect("remove_item", self, "_on_remove_item")
+#	item.connect("item_held", self, "_on_item_held")
+#	item.connect("item_dropped", self, "_on_item_dropped")
 	$items.add_child(item)
 	item.global_position = location
-	item.explode()
+	if item.random:
+		item.explode()
+	if item.grow:
+		item.spawn_in()
+	else:
+		item.scale = Vector2.ONE
 
 func grab(cursor_pos):
 	var c = get_container_under_cursor(cursor_pos)
@@ -110,14 +129,22 @@ func grab_item(pos):
 	if item == null:
 		return null
    
-	var item_pos = item.global_position + Vector2(cell_size / 2, cell_size / 2)
+	var item_pos = item.global_position - ((item.size * cell_size) / 2) + Vector2(cell_size / 2, cell_size / 2)
 	var g_pos = pos_to_grid_coord(item_pos)
 	var item_size = get_grid_size(item)
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
+	item.disconnect_relic()
 	item.held = true
 	item.mode = RigidBody2D.MODE_KINEMATIC
 	item.bring_front()
 	item.emit_signal("item_held")
+	return item
+
+func get_item(pos):
+	var item = get_item_under_pos(pos)
+	if item == null:
+		return null
+   
 	return item
 
 func get_container_under_cursor(cursor_pos):
@@ -141,13 +168,14 @@ func play_item(cursor_pos):
 		item = c.select_item(cursor_pos)
 		if item == null:
 			return
+		item.send_back()
 		if item.targets == "none":
 			return
 		if item.tags.has("weapon") or item.tags.has("jutsu"):
-			if Game.clock > 0:
+			if Game.values.energy > 0:
 				ItemUse.item_use_case[item.targets].call_func(item)
 			else:
-				Game.emit_signal("error", "clock is 0")
+				Game.emit_signal("error", "energy is 0")
 		else:
 			ItemUse.item_use_case[item.targets].call_func(item)
 
@@ -178,7 +206,7 @@ func release(cursor_pos):
 		return_item()
 
 func _on_remove_item(item):
-	var item_pos = item.global_position + Vector2(cell_size / 2, cell_size / 2)
+	var item_pos = item.global_position - ((item.size * cell_size) / 2) + Vector2(cell_size / 2, cell_size / 2)
 	var g_pos = pos_to_grid_coord(item_pos)
 	var item_size = get_grid_size(item)
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
@@ -195,7 +223,7 @@ func insert_item_at_last_available_spot(item, spot):
 	var item_size = spot.item_size
 	set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
 #	item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-	animate_insert(item, rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size)
+	animate_insert(item, rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size + ((item.size * cell_size) / 2))
 	last_available_pos.clear()
 
 func set_grid_space(x, y, w, h, state):
@@ -209,15 +237,15 @@ func get_grid_size(item):
 	results.y = item.size.y
 	return results
 
-func get_full_grid_size(grid):
+func get_full_grid_size(curr_grid):
 	var results = {}
-	var s = grid.get_size()
+	var s = curr_grid.get_size()
 	results.x = clamp(int(s.x / cell_size  * item_scale.x), 1, 500)
 	results.y = clamp(int(s.y / cell_size  * item_scale.y), 1, 500)
 	return results
 
 func can_insert(item):
-	var item_pos = item.global_position + Vector2(cell_size / 2, cell_size / 2)
+	var item_pos = item.global_position - ((item.size * cell_size) / 2) + Vector2(cell_size / 2, cell_size / 2)
 	var g_pos = pos_to_grid_coord(item_pos)
 	var item_size = get_grid_size(item)
 	g_pos = fit_pos(g_pos.x, g_pos.y, item_size.x, item_size.y)
@@ -227,7 +255,7 @@ func can_insert(item):
 			last_available_pos = {"g_pos" : g_pos, "item_size" : item_size}
 
 func is_grid_space_available(x, y, w, h):
-	if x<0 or y < 0:
+	if x < 0 or y < 0:
 		return false
 	if x + w > grid_width or y + h > grid_height:
 		return false
@@ -294,9 +322,9 @@ func find_fit(x, y, w, h):
 	return results
 
 func spot_check(x,y):
-	if !grid[x][y]["carrying"] and grid[x][y]["available"] and !grid[x][y]["infected"]:
+	if !grid[x][y]["carrying"] and grid[x][y]["available"]:
 		return true
-	return false
+	return false 
 
 func get_item_under_pos(pos):
 	for item in $items.get_children():
@@ -311,16 +339,17 @@ func position_check(x,y):
 	return false
 
 func insert_item(item):
-	var item_pos = item.global_position + Vector2(cell_size / 2, cell_size / 2)
+	var item_pos = item.global_position - ((item.size * cell_size) / 2) + Vector2(cell_size / 2, cell_size / 2)
 	var g_pos = pos_to_grid_coord(item_pos)
 	var item_size = get_grid_size(item)
 	if is_grid_space_available(g_pos.x, g_pos.y, item_size.x, item_size.y):
 		set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, true)
+		item.connect_relic()
 #		item.global_position = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
-		var insert_pos = rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size
+		var insert_pos = (rect_global_position + Vector2(g_pos.x, g_pos.y) * cell_size) + ((item.size * cell_size) / 2)
 		animate_insert(item, insert_pos)
 		yield(_animation,"tween_completed")
-		emit_signal("dust", insert_pos, item_size)
+		emit_signal("dust", item.global_position, item_size)
 		return true
 	else:
 		return false
@@ -335,7 +364,7 @@ func insert_item_at_first_available_spot(item):
 	for x in range(grid_width):
 		for y in range(grid_height):
 			if spot_check(x,y):
-				item.global_position = rect_global_position + Vector2(x, y) * cell_size
+				item.global_position = rect_global_position + Vector2(x, y) * cell_size + ((item.size * cell_size) / 2)
 				if insert_item(item):
 					return true
 	return false

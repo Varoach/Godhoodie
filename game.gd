@@ -1,6 +1,6 @@
 extends Node
 
-const STEP_WAIT_TIME = 0.5
+const STEP_WAIT_TIME = 1
 
 signal player_start()
 signal player_played()
@@ -9,23 +9,40 @@ signal enemy_start()
 signal enemy_end()
 signal step_text()
 signal spawn_enemy()
+signal replace_enemy()
+signal enemy_spawned()
 signal spawn_next_enemy()
+signal move_character()
+signal enemy_moved()
 signal error(value)
 
 var targets = []
 var player_targets = []
 var enemy_targets = []
+var global_targets = []
+var positions = []
+var enemy_targets_count = 0
 #var enemy_positions = []
 var walls = []
+var round_buffs = {}
+var game_buffs = {}
 var items
-var clock = 2
+var values = {"energy" : 2}
 
 var player
 
-var item_held
+var game_screen
+
+var item_held = null
+var item_pressed = null
 var play_space
 
 var inventory = null
+
+var rng = RandomNumberGenerator.new()
+
+var crafting = []
+var crafting_items = []
 
 var _stepper = Timer.new()
 var _steps_back = ["start_game", "your_turn"]
@@ -39,9 +56,7 @@ func _init():
 	_stepper.connect("timeout", self, "_on_stepper_timeout")
 	connect("error", self, "_on_error")
 
-func create_game(character):
-	player = character
-	
+func _ready():
 	_stepper.start()
 
 func enemy_turn():
@@ -62,3 +77,7 @@ func _step_start_turn():
 
 func _on_error(error):
 	print(error)
+
+func reset_craft():
+	crafting = []
+	crafting_items = []

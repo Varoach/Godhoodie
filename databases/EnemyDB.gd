@@ -7,8 +7,10 @@ const IMAGE_PATH = "res://assets/character/enemies/"
 const SCRIPT_PATH = "res://characters/enemies/scripts/"
 
 const ENEMIES = {
-	"slime": {
+	"dummy": {
+		"tags" : ["liquid"],
 		"health" : 5,
+		"loyal" : "player",
 		"drops" : {
 			"gel" : 100,
 			"raw" : 10
@@ -31,7 +33,12 @@ func get_images(enemy_id):
 
 func enemy_setup(enemy_id):
 	var enemy = custom_enemy.instance()
-	enemy.set_script(load(SCRIPT_PATH + enemy_id + ".gd"))
+	enemy.title = enemy_id
+#	enemy.set_script(load(SCRIPT_PATH + enemy_id + ".gd"))
+	for tag in get_enemy(enemy_id)["tags"]:
+		enemy.add_to_group(tag)
+	if get_enemy(enemy_id)["loyal"]:
+		enemy.loyal_set(get_enemy(enemy_id)["loyal"])
 	enemy.max_health = get_enemy(enemy_id)["health"]
 	enemy.health = get_enemy(enemy_id)["health"]
 	enemy.drops = get_enemy(enemy_id)["drops"]
