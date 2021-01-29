@@ -6,6 +6,6 @@ func _ready():
 
 func _summon_dune(target_pos):
 	var dune_walker = EnemyDB.enemy_setup("dummy")
-	Game.global_targets.append(dune_walker)
+	Game.neutral_targets.append(dune_walker)
 	dune_walker.modulate = Color.orangered
 	Game.emit_signal("replace_enemy", dune_walker, target_pos)

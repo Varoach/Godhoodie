@@ -7,6 +7,7 @@ var sleep = 0
 var balance = 0
 var before_balance = 0
 var dead = false
+var moving = false
 
 signal dead()
 signal cut_received(value)
@@ -52,3 +53,25 @@ func bring_front():
 
 func send_back():
 	get_parent().z_index = 0
+
+func get_position():
+	return int(get_parent().get_index())
+
+func get_position_diff(character):
+	return get_position() - character.get_position()
+
+func slide_towards(character):
+	if abs(character.get_position() - get_position()) == 1:
+		return false
+	var end_pos
+	if character.get_position() > get_position():
+		end_pos = 1
+	else:
+		end_pos = -1
+	Game.emit_signal("slide_character", self, end_pos)
+	return true
+
+func is_moving():
+	if moving:
+		return true
+	return false

@@ -20,8 +20,11 @@ var curr_targets = [Game.player]
 var damage_type = []
 var is_moving = false
 var old_position = null
+var hostile = true
 
 func _ready():
+	hostile = true
+	Game.enemies.append(self)
 	balance_size = Vector2(balance_view.get_width(), balance_view.get_height())
 	set_ui()
 	set_hearts()
@@ -54,12 +57,9 @@ func _on_sand(value, item):
 		new_value += Game.round_buffs.sand
 	damage(new_value)
 	if balance_break():
-		Game.emit_signal("move_enemy", self, get_position() + 1)
+		Game.emit_signal("slide_character", self, get_position() + 1)
 		yield(Game, "enemy_moved")
 		item.emit_signal("on_balance_break", self)
-
-func get_position():
-	return Game.enemy_targets.find(self)
 
 func get_old_position():
 	return old_position
@@ -97,45 +97,47 @@ func _on_healing_received(value):
 	check_dead()
 
 func play_turn():
-	var man_present = false
-	var new_targets = curr_targets.duplicate()
-	for target in Game.global_targets:
-		if target != self:
-			new_targets.append(target)
-	if sleep > 0:
-		sleep -= 1
-		return
-	if loyal:
-		if loyal != "player":
-			for target in new_targets:
-				if target.is_in_group(loyal):
-					new_targets.erase(target)
-	if !new_targets:
-		return
-	if is_in_group("man"):
-		for target in new_targets:
-				if target.is_in_group("monster"):
-					new_targets.append(target)
-				if target.is_in_group("beast"):
-					new_targets.erase(target)
-				if target.is_in_group("spirit"):
-					pass
-	if is_in_group("monster"):
-		for target in new_targets:
-			if target.is_in_group("man"):
-				new_targets.append(target)
-	if is_in_group("beast"):
-		for target in new_targets:
-			if target.is_in_group("man"):
-				man_present = true
-				break
-	if man_present:
-		for target in new_targets:
-			if target.is_in_group("monster"):
-				new_targets.append(target)
-	if is_in_group("fear"):
-		pass
-	new_targets[randi() % new_targets.size()].use("attack", attack())
+	if !slide_towards(Game.player):
+		Game.player.use("attack", attack())
+#	var man_present = false
+#	var new_targets = curr_targets.duplicate()
+#	for target in Game.neutral_targets:
+#		if target != self:
+#			new_targets.append(target)
+#	if sleep > 0:
+#		sleep -= 1
+#		return
+#	if loyal:
+#		if loyal != "player":
+#			for target in new_targets:
+#				if target.is_in_group(loyal):
+#					new_targets.erase(target)
+#	if !new_targets:
+#		return
+#	if is_in_group("man"):
+#		for target in new_targets:
+#				if target.is_in_group("monster"):
+#					new_targets.append(target)
+#				if target.is_in_group("beast"):
+#					new_targets.erase(target)
+#				if target.is_in_group("spirit"):
+#					pass
+#	if is_in_group("monster"):
+#		for target in new_targets:
+#			if target.is_in_group("man"):
+#				new_targets.append(target)
+#	if is_in_group("beast"):
+#		for target in new_targets:
+#			if target.is_in_group("man"):
+#				man_present = true
+#				break
+#	if man_present:
+#		for target in new_targets:
+#			if target.is_in_group("monster"):
+#				new_targets.append(target)
+#	if is_in_group("fear"):
+#		pass
+#	new_targets[randi() % new_targets.size()].use("attack", attack())
 
 func loyal_set(target):
 	loyal = target

@@ -13,17 +13,17 @@ signal replace_enemy()
 signal enemy_spawned()
 signal spawn_next_enemy()
 signal move_character()
+signal slide_character()
 signal enemy_moved()
 signal error(value)
 
 var targets = []
 var player_targets = []
 var enemy_targets = []
-var global_targets = []
+var neutral_targets = []
+var enemies = []
 var positions = []
 var enemy_targets_count = 0
-#var enemy_positions = []
-var walls = []
 var round_buffs = {}
 var game_buffs = {}
 var items
