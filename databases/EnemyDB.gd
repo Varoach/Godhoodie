@@ -19,6 +19,19 @@ const ENEMIES = {
 			"attack" : [2, 5],
 		}
 	},
+	"slime": {
+		"tags" : ["liquid"],
+		"health" : 5,
+		"loyal" : "player",
+		"width" : 2,
+		"drops" : {
+			"gel" : 100,
+			"raw" : 10
+		},
+		"values":{
+			"attack" : [2, 5],
+		}
+	},
 }
 
 func get_enemy(enemy_id):
@@ -37,8 +50,8 @@ func enemy_setup(enemy_id):
 #	enemy.set_script(load(SCRIPT_PATH + enemy_id + ".gd"))
 	for tag in get_enemy(enemy_id)["tags"]:
 		enemy.add_to_group(tag)
-	if get_enemy(enemy_id)["loyal"]:
-		enemy.loyal_set(get_enemy(enemy_id)["loyal"])
+	if get_enemy(enemy_id)["width"]:
+		enemy.width = get_enemy(enemy_id)["width"]
 	enemy.max_health = get_enemy(enemy_id)["health"]
 	enemy.health = get_enemy(enemy_id)["health"]
 	enemy.drops = get_enemy(enemy_id)["drops"]

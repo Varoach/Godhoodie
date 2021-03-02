@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://assets/battle/backgrounds/original.png" type="Texture" id=1]
 [ext_resource path="res://inventory/inventory.tscn" type="PackedScene" id=2]
@@ -8,18 +8,13 @@
 [ext_resource path="res://screens/battle/drop_area.tres" type="PhysicsMaterial" id=6]
 [ext_resource path="res://assets/battle/clock.png" type="Texture" id=7]
 [ext_resource path="res://assets/godot/fonts/clock-font.tres" type="DynamicFont" id=8]
-[ext_resource path="res://screens/battle/craft_spot.gd" type="Script" id=9]
-[ext_resource path="res://assets/battle/craft_circle.png" type="Texture" id=10]
-[ext_resource path="res://assets/battle/craft_button.png" type="Texture" id=11]
+[ext_resource path="res://screens/battle/movement.gd" type="Script" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 3890.13, 717.785 )
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 1722.9, 2317.5 )
-
-[sub_resource type="CircleShape2D" id=3]
-radius = 210.528
 
 [node name="main" type="Node"]
 script = ExtResource( 5 )
@@ -42,6 +37,7 @@ margin_left = 1920.0
 margin_top = 1325.0
 margin_right = -1880.0
 margin_bottom = -56.28
+script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -150,48 +146,5 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="craft_spot" type="Area2D" parent="." groups=[
-"spawn_point",
-]]
-visible = false
-position = Vector2( 486, 828.086 )
-scale = Vector2( 1e-05, 1e-05 )
-input_pickable = false
-space_override = 3
-gravity_point = true
-gravity_vec = Vector2( 0, 0 )
-gravity = 1024.0
-linear_damp = 3.0
-angular_damp = 0.0
-priority = 1.0
-collision_layer = 2147483649
-script = ExtResource( 9 )
-
-[node name="collider" type="CollisionShape2D" parent="craft_spot"]
-shape = SubResource( 3 )
-
-[node name="crafty" type="Sprite" parent="craft_spot"]
-position = Vector2( 0, 0.00012207 )
-scale = Vector2( 0.417845, 0.417845 )
-z_index = 1
-texture = ExtResource( 10 )
-
-[node name="craft_button" type="TextureButton" parent="."]
-visible = false
-margin_left = 2007.49
-margin_top = 1049.69
-margin_right = 2125.49
-margin_bottom = 1167.69
-rect_scale = Vector2( 1e-05, 1e-05 )
-rect_pivot_offset = Vector2( 59, 59 )
-texture_normal = ExtResource( 11 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 [connection signal="pressed" from="btn_menu" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="clock" to="." method="_on_clock_pressed"]
-[connection signal="body_entered" from="craft_spot" to="craft_spot" method="_on_craft_spot_body_entered"]
-[connection signal="body_exited" from="craft_spot" to="craft_spot" method="_on_craft_spot_body_exited"]
-[connection signal="pressed" from="craft_button" to="." method="_on_craft_button_pressed"]

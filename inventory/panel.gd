@@ -25,7 +25,9 @@ func _ready():
 	var s = get_full_grid_size(self)
 	grid_width = s.x
 	grid_height = s.y
-	rect_position.y += (rect_size.y - (grid_height * cell_size)) / 2
+	var offset = (rect_size.y - (grid_height * cell_size)) / 2
+	rect_position.y += offset
+	$instrument.rect_global_position.y -= offset
 	for x in range(grid_width):
 		grid[x] = {}
 		for y in range(grid_height):

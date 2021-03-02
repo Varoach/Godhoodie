@@ -21,21 +21,14 @@ var damage_type = []
 var is_moving = false
 var old_position = null
 var hostile = true
+var width = 1
 
 func _ready():
-	hostile = true
-	Game.enemies.append(self)
 	balance_size = Vector2(balance_view.get_width(), balance_view.get_height())
 	set_ui()
 	set_hearts()
 	connect("damage_received", self, "_on_damage_received")
 	connect("heal_received", self, "_on_heal_received")
-	connect("cut_received", self, "_on_cut")
-	connect("ice_received", self, "_on_ice")
-	connect("fire_received", self, "_on_fire")
-	connect("water_received", self, "_on_water")
-	connect("sand_received", self, "_on_sand")
-	set_size(check_size())
 
 func damage(value):
 	emit_signal("damage_received", value)
@@ -51,32 +44,13 @@ func _on_damage():
 func _move(new_pos):
 	Game.emit_signal("move_character", self, new_pos)
 
-func _on_sand(value, item):
-	var new_value = value
-	if Game.round_buffs.has("sand"):
-		new_value += Game.round_buffs.sand
-	damage(new_value)
-	if balance_break():
-		Game.emit_signal("slide_character", self, get_position() + 1)
-		yield(Game, "enemy_moved")
-		item.emit_signal("on_balance_break", self)
-
 func get_old_position():
 	return old_position
 
 func check_dead():
 	if health <= 0:
-		var summon
-		if ItemUse.last_item.has_signal("on_kill"):
-			ItemUse.last_item.emit_signal("on_kill", get_position())
-			if ItemUse.last_item.summon_on_kill:
-				summon = true
-		if !summon:
-			dead = true
-			emit_signal("dead", self)
-		else:
-			dead = true
-			emit_signal("dead", self, true)
+		dead = true
+		emit_signal("dead", self)
 
 func attack():
 	return int(rand_range(values.attack[0], values.attack[1]))
@@ -99,61 +73,6 @@ func _on_healing_received(value):
 func play_turn():
 	if !slide_towards(Game.player):
 		Game.player.use("attack", attack())
-#	var man_present = false
-#	var new_targets = curr_targets.duplicate()
-#	for target in Game.neutral_targets:
-#		if target != self:
-#			new_targets.append(target)
-#	if sleep > 0:
-#		sleep -= 1
-#		return
-#	if loyal:
-#		if loyal != "player":
-#			for target in new_targets:
-#				if target.is_in_group(loyal):
-#					new_targets.erase(target)
-#	if !new_targets:
-#		return
-#	if is_in_group("man"):
-#		for target in new_targets:
-#				if target.is_in_group("monster"):
-#					new_targets.append(target)
-#				if target.is_in_group("beast"):
-#					new_targets.erase(target)
-#				if target.is_in_group("spirit"):
-#					pass
-#	if is_in_group("monster"):
-#		for target in new_targets:
-#			if target.is_in_group("man"):
-#				new_targets.append(target)
-#	if is_in_group("beast"):
-#		for target in new_targets:
-#			if target.is_in_group("man"):
-#				man_present = true
-#				break
-#	if man_present:
-#		for target in new_targets:
-#			if target.is_in_group("monster"):
-#				new_targets.append(target)
-#	if is_in_group("fear"):
-#		pass
-#	new_targets[randi() % new_targets.size()].use("attack", attack())
-
-func loyal_set(target):
-	loyal = target
-	if loyal == "player":
-		if curr_targets.has(Game.player):
-			curr_targets.erase(Game.player)
-	if loyal == "man":
-		for target in curr_targets:
-			if target.is_in_group("man"):
-				if curr_targets.has(target):
-					curr_targets.erase(target)
-
-func loyal_unset():
-	loyal = null
-	if !curr_targets.has(Game.player):
-		curr_targets.append(Game.player)
 
 func _on_damage_received(value):
 	if value >= health:
@@ -249,49 +168,3 @@ func clear_hearts():
 	for child in $ui/hearts/container.get_children():
 		$ui/hearts/container.remove_child(child)
 		child.queue_free()
-
-func divide():
-	if dead or char_size == "small" or before_balance > 0:
-		return
-	if $animator.is_playing():
-		yield($animator, "animation_finished")
-	var new_char = EnemyDB.enemy_setup(title)
-	
-	var new_char_size = ""
-	if char_size == "large":
-		new_char_size = "medium"
-	elif char_size == "medium":
-		new_char_size = "small"
-	char_size = new_char_size
-	new_char.char_size = new_char_size
-	
-	var new_health = health/2
-	max_health = new_health
-	health = new_health
-	new_char.max_health = new_health
-	new_char.health = new_health
-	
-	set_hearts()
-	new_char.set_hearts()
-	
-	set_size(check_size())
-	new_char.set_size(new_char.check_size())
-	
-	Game.emit_signal("spawn_next_enemy", new_char)
-
-func combine():
-	if char_size == "large":
-		return
-
-func set_size(size):
-	$sprite.scale = Vector2(size, size)
-	$mouse_area.rect_scale = Vector2(size, size)
-	position.y = -$mouse_area.rect_size.y * $mouse_area.rect_scale.y / 2
-
-func check_size():
-	if char_size == "large":
-		return 0.8
-	elif char_size == "medium":
-		return 0.6
-	elif char_size == "small":
-		return 0.4
