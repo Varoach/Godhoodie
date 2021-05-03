@@ -14,7 +14,7 @@ func _init():
 func _ready():
 	Game.game_screen = self
 	Game.connect("step_text", self, "_change_step_text")
-	Game.connect("spawn_enemy", $positions, "_spawn_enemy")
+	Game.connect("spawn", $positions, "_spawn")
 	Game.connect("replace_enemy", $positions, "_replace_enemy")
 	Game.connect("move_character", $positions, "_move")
 	Game.connect("slide_character", $positions, "_slide")
@@ -59,8 +59,10 @@ func show_dead(character):
 	_animation.interpolate_property(character, "modulate:a", 1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	_animation.start()
 
-func spawn(character):
+func _spawn(character, spot):
+	character.modulate.a = 0
 	_animation.interpolate_property(character, "modulate:a", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+	$positions.get_child(spot).add_child(character)
 	_animation.start()
 
 func _on_end_battle():
@@ -71,15 +73,17 @@ func apply_item(item):
 
 func initial_spawn(enemy, ambush = false):
 	Game.rng.randomize()
-	$positions.get_child(7).add_child(Game.player)
-	if !ambush:
-		$positions.get_child(Game.rng.randi_range(0,3)).add_child(Game.player)
-	elif ambush:
-		$positions.get_child(4).add_child(Game.player)
+	$positions.get_child(0).add_child(Game.player)
+#	if !ambush:
+#		$positions.get_child(Game.rng.randi_range(0,3)).add_child(Game.player)
+#	elif ambush:
+#		$positions.get_child(4).add_child(Game.player)
 	enemy.connect("dead", self, "_on_enemy_dead")
 	enemy.add_to_group("enemy")
 	Game.rng.randomize()
-	$positions.get_child(Game.rng.randi_range(5,8)).add_child(enemy)
+#	$positions.get_child(Game.rng.randi_range(5,8)).add_child(enemy)
+#	$positions.get_child(Game.rng.randi_range(5,8)).add_child(enemy)
+	_spawn(enemy, 8)
 
 func _on_enemy_dead(enemy):
 	enemy.get_parent().remove_child(enemy)
